@@ -22,9 +22,9 @@ jobs:
     - name: Run tests
       run: cargo test --verbose    
     - name: Build Float
-      run: cargo build --verbose --features float --features simple_test_models/float
+      run: cargo build --verbose --features float #--features simple_test_models/float
     - name: Run tests Float
-      run: cargo test --verbose  --features float --features simple_test_models/float
+      run: cargo test --verbose  --features float #--features simple_test_models/float
     - name: Build doc
       run: RUSTDOCFLAGS="--html-in-header katex.html" cargo doc --document-private-items --no-deps
     - name: Set Index
