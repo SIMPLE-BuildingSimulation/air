@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["AirFlowModel",""]]});
+initSidebarItems({"struct":[["AirFlowModel",""]],"type":[["Resolver",""]]});
