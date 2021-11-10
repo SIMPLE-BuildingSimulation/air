@@ -18,10 +18,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-//! A Finite Difference-based Thermal simulation module
+//! A simple AirFlow model for SIMPLE Building Simulation
 //!
-//! It uses finite differences for marching forward in time and also
-//! for calculating the heat transfer through walls.
+//! It uses the equations available in EnergyPlus' Engineering Reference
+//! for calculating the infiltration rates. No ventiation is calculated
+//! yet.
 
 /// The kind of Floating point number used in the
 /// library... the `"float"` feature means it becomes `f32`

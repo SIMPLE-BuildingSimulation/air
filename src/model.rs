@@ -44,7 +44,7 @@ impl ErrorHandling for AirFlowModel {
 impl SimulationModel for AirFlowModel {
     type Type = Self;
 
-    /// Creates a new ThermalModel from a SimpleModel.    
+    /// Creates a new AirFlowModel from a SimpleModel.    
     fn new(
         model: &SimpleModel,
         state: &mut SimulationStateHeader,
