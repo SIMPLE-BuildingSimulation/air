@@ -18,13 +18,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-
-
 //! A Finite Difference-based Thermal simulation module
 //!
 //! It uses finite differences for marching forward in time and also
 //! for calculating the heat transfer through walls.
-
 
 /// The kind of Floating point number used in the
 /// library... the `"float"` feature means it becomes `f32`
@@ -35,9 +32,6 @@ type Float = f32;
 #[cfg(not(feature = "float"))]
 type Float = f64;
 
+mod eplus;
 pub mod model;
-pub mod eplus;
-
-
-
-
+mod resolvers;

@@ -9,6 +9,7 @@ edition = "2018"
 simple_model = { git = "https://github.com/SIMPLE-BuildingSimulation/simple_model.git" }
 communication_protocols = { git = "https://github.com/SIMPLE-BuildingSimulation/communication_protocols.git" }
 weather = { git = "https://github.com/SIMPLE-BuildingSimulation/weather.git" }
+# weather = {path = "../weather"}
 calendar = { git = "https://github.com/SIMPLE-BuildingSimulation/calendar.git" }
 
 [dev-dependencies]

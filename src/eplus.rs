@@ -21,58 +21,107 @@ SOFTWARE.
 use std::rc::Rc;
 
 use crate::Float;
-use weather::current_weather::CurrentWeather;
-use simple_model::space::Space;
-use simple_model::simulation_state::SimulationState;
+use simple_model::{SimulationState, Space};
+use weather::CurrentWeather;
 
 /// Calculates an infiltration rate equal to that estimated by
-/// EnergyPlus' `ZoneInfiltration:DesignFlowRate`. 
-/// 
+/// EnergyPlus' `ZoneInfiltration:DesignFlowRate`.
+///
 /// The equation is $`\phi = \phi_{design} (A + B|T_{space} - T_{outside}| + C\times W_{speed} + D\times W^2_{speed})`$
-pub fn design_flow_rate(weather: &CurrentWeather, space: &Rc<Space>, state: &SimulationState, design_rate: Float, a: Float, b: Float, c: Float, d: Float)-> Float {
-    let t_space = space.dry_bulb_temperature(state).expect("Space does not have Dry Bulb temperature");
-    let t_out = weather.dry_bulb_temperature.expect("Weather given did not have Dry Bulb temperature");
-    let wind_speed = weather.wind_speed.expect("Weather does not have Wind Speed");
+pub fn design_flow_rate(
+    weather: &CurrentWeather,
+    space: &Rc<Space>,
+    state: &SimulationState,
+    design_rate: Float,
+    a: Float,
+    b: Float,
+    c: Float,
+    d: Float,
+) -> Float {
+    let t_space = space
+        .dry_bulb_temperature(state)
+        .expect("Space does not have Dry Bulb temperature");
+    let t_out = weather
+        .dry_bulb_temperature
+        .expect("Weather given did not have Dry Bulb temperature");
+    let wind_speed = weather
+        .wind_speed
+        .expect("Weather does not have Wind Speed");
 
-    design_rate * (
-        a +
-        b * (t_space - t_out).abs() +
-        c * wind_speed + 
-        d * wind_speed * wind_speed
-    )
+    design_rate * (a + b * (t_space - t_out).abs() + c * wind_speed + d * wind_speed * wind_speed)
 }
 
 /// Calculates the design flow rates using the BLAST defaults (reported in EnergyPlus' Input/Output reference)
-pub fn blast_design_flow_rate(weather: &CurrentWeather, space: &Rc<Space>, state: &SimulationState, design_rate: Float)-> Float {
-    design_flow_rate(weather, space, state, design_rate, 0.606, 0.03636, 0.1177, 0.)
+pub fn blast_design_flow_rate(
+    weather: &CurrentWeather,
+    space: &Rc<Space>,
+    state: &SimulationState,
+    design_rate: Float,
+) -> Float {
+    design_flow_rate(
+        weather,
+        space,
+        state,
+        design_rate,
+        0.606,
+        0.03636,
+        0.1177,
+        0.,
+    )
 }
 
 /// Calculates the design flow rates using the DOE-2 defaults (reported in EnergyPlus' Input/Output reference)
-pub fn doe2_design_flow_rate(weather: &CurrentWeather, space: &Rc<Space>, state: &SimulationState, design_rate: Float)-> Float {
+pub fn doe2_design_flow_rate(
+    weather: &CurrentWeather,
+    space: &Rc<Space>,
+    state: &SimulationState,
+    design_rate: Float,
+) -> Float {
     design_flow_rate(weather, space, state, design_rate, 0., 0., 0.224, 0.)
 }
 
+pub fn effective_leakage_area(
+    weather: &CurrentWeather,
+    space: &Rc<Space>,
+    state: &SimulationState,
+    area: Float,
+    cw: Float,
+    cs: Float,
+) -> Float {
+    let outdoor_temp = weather
+        .dry_bulb_temperature
+        .expect("Weather provided does not include DryBulb Temperature");
+    let space_temp = space
+        .dry_bulb_temperature(state)
+        .expect("Space has no Dry-bulb temperature");
+    let delta_t = (outdoor_temp - space_temp).abs();
+    let ws = match weather.wind_speed {
+        Some(v) => v,
+        None => 0.0,
+    };
 
+    (area / 1000.) * (cs * delta_t + cw * ws * ws).sqrt()
+}
 
 #[cfg(test)]
 mod tests {
 
     use super::*;
-    use weather::synthetic_weather::SyntheticWeather;
-    use schedule::constant::ScheduleConstant;
-    use calendar::date::Date;
+    use calendar::Date;
+    use schedule::ScheduleConstant;
+    use weather::SyntheticWeather;
     use weather::Weather;
 
     #[test]
     fn test_design_blast_flow_rate() {
         /* THIS COMES FROM ENERGY PLUS' INPUT OUTPUT REF */
-        /* 
-            "These coeﬀicients produce a value of 1.0 at 0◦C deltaT and 
-            3.35 m/s (7.5 mph) windspeed, which corresponds to a typical 
-            summer condition. 
-            
-            At a winter condition of 40◦C deltaT and 6 m/s 
-            (13.4 mph) windspeed, these coefficients would increase the infiltration 
+        /*
+            "These coefficients produce a value of 1.0 at 0◦C deltaT and
+            3.35 m/s (7.5 mph) windspeed, which corresponds to a typical
+            summer condition.
+
+            At a winter condition of 40◦C deltaT and 6 m/s
+            (13.4 mph) windspeed, these coefficients would increase the infiltration
             rate by a factor of 2.75."
         */
 
@@ -81,52 +130,54 @@ mod tests {
         // 0 C of temperature difference
         weather.dry_bulb_temperature = Box::new(ScheduleConstant::new(2.));
         let state = vec![2.];
-        // 
+        //
         weather.wind_speed = Box::new(ScheduleConstant::new(3.35));
 
         let space = Space::new("some space".to_string());
         space.set_dry_bulb_temperature_index(0);
         let space = Rc::new(space);
 
-
-        let date = Date{
-            month: 1, day: 1, hour: 1.
+        let date = Date {
+            month: 1,
+            day: 1,
+            hour: 1.,
         };
 
         let design_rate = 1.;
         let current_weather = weather.get_weather_data(date);
         let flow = blast_design_flow_rate(&current_weather, &space, &state, design_rate);
-        assert!((1.-flow).abs() < 0.02);
+        assert!((1. - flow).abs() < 0.02);
 
         // WINTER
         let mut weather = SyntheticWeather::new();
         // 40 C of temperature difference
-        weather.dry_bulb_temperature = Box::new(ScheduleConstant::new(42.));
+        weather.dry_bulb_temperature = Box::new(ScheduleConstant::new(-38.));
         let state = vec![2.];
-        // 
+        //
         weather.wind_speed = Box::new(ScheduleConstant::new(6.));
 
         let space = Space::new("some space".to_string());
         space.set_dry_bulb_temperature_index(0);
         let space = Rc::new(space);
 
-
-        let date = Date{
-            month: 1, day: 1, hour: 1.
+        let date = Date {
+            month: 1,
+            day: 1,
+            hour: 1.,
         };
 
         let design_rate = 1.;
         let current_weather = weather.get_weather_data(date);
         let flow = blast_design_flow_rate(&current_weather, &space, &state, design_rate);
-        assert!((2.75-flow).abs() < 0.02);
+        assert!((2.75 - flow).abs() < 0.02);
     }
 
     #[test]
     fn test_design_doe2_flow_rate() {
         /* THIS COMES FROM ENERGY PLUS' INPUT OUTPUT REF */
-        /* 
-            "With these coefficients, the summer conditions above would 
-            give a factor of 0.75, and the winter conditions would give 1.34. 
+        /*
+            "With these coefficients, the summer conditions above would
+            give a factor of 0.75, and the winter conditions would give 1.34.
             A windspeed of 4.47 m/s (10 mph) gives a factor of 1.0.
         */
 
@@ -135,65 +186,68 @@ mod tests {
         // 0 C of temperature difference
         weather.dry_bulb_temperature = Box::new(ScheduleConstant::new(2.));
         let state = vec![2.];
-        // 
+        //
         weather.wind_speed = Box::new(ScheduleConstant::new(3.35));
 
         let space = Space::new("some space".to_string());
         space.set_dry_bulb_temperature_index(0);
         let space = Rc::new(space);
 
-
-        let date = Date{
-            month: 1, day: 1, hour: 1.
+        let date = Date {
+            month: 1,
+            day: 1,
+            hour: 1.,
         };
 
         let design_rate = 1.;
         let current_weather = weather.get_weather_data(date);
         let flow = doe2_design_flow_rate(&current_weather, &space, &state, design_rate);
-        assert!((0.75-flow).abs() < 0.02);
+        assert!((0.75 - flow).abs() < 0.02);
 
         // WINTER
         let mut weather = SyntheticWeather::new();
         // 40 C of temperature difference
         weather.dry_bulb_temperature = Box::new(ScheduleConstant::new(42.));
         let state = vec![2.];
-        // 
+        //
         weather.wind_speed = Box::new(ScheduleConstant::new(6.));
 
         let space = Space::new("some space".to_string());
         space.set_dry_bulb_temperature_index(0);
         let space = Rc::new(space);
 
-
-        let date = Date{
-            month: 1, day: 1, hour: 1.
+        let date = Date {
+            month: 1,
+            day: 1,
+            hour: 1.,
         };
 
         let design_rate = 1.;
         let current_weather = weather.get_weather_data(date);
         let flow = doe2_design_flow_rate(&current_weather, &space, &state, design_rate);
-        assert!((1.34-flow).abs() < 0.02);
+        assert!((1.34 - flow).abs() < 0.02);
 
         // ... A windspeed of 4.47 m/s (10 mph) gives a factor of 1.0.
         let mut weather = SyntheticWeather::new();
         // 40 C of temperature difference
         weather.dry_bulb_temperature = Box::new(ScheduleConstant::new(42.));
         let state = vec![2.];
-        // 
+        //
         weather.wind_speed = Box::new(ScheduleConstant::new(4.47));
 
         let space = Space::new("some space".to_string());
         space.set_dry_bulb_temperature_index(0);
         let space = Rc::new(space);
 
-
-        let date = Date{
-            month: 1, day: 1, hour: 1.
+        let date = Date {
+            month: 1,
+            day: 1,
+            hour: 1.,
         };
 
         let design_rate = 1.;
         let current_weather = weather.get_weather_data(date);
         let flow = doe2_design_flow_rate(&current_weather, &space, &state, design_rate);
-        assert!((1.-flow).abs() < 0.02);
+        assert!((1. - flow).abs() < 0.02);
     }
 }
