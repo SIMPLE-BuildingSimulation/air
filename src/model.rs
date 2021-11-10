@@ -102,7 +102,6 @@ impl SimulationModel for AirFlowModel {
         _model: &SimpleModel,
         state: &mut SimulationState,
     ) -> Result<(), String> {
-        
         // Process infiltration
         let current_weather = weather.get_weather_data(date);
         for func in self.infiltration_calcs.iter() {
@@ -113,66 +112,72 @@ impl SimulationModel for AirFlowModel {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
+    use schedule::ScheduleConstant;
     use simple_model::Space;
     use weather::SyntheticWeather;
-    use schedule::ScheduleConstant;
 
     #[test]
-    fn test_infiltration(){
+    fn test_infiltration() {
         let mut simple_model = SimpleModel::new("model".to_string());
         let mut state_header = SimulationStateHeader::new();
 
         let mut space = Space::new("some space".to_string());
-        space.set_infiltration(Infiltration::Doe2(1.));        
-        let i =state_header.push(SimulationStateElement::SpaceDryBulbTemperature(0), 22.);
+        space.set_infiltration(Infiltration::Doe2(1.));
+        let i = state_header.push(SimulationStateElement::SpaceDryBulbTemperature(0), 22.);
         space.set_dry_bulb_temperature_index(i);
         let space = simple_model.add_space(space);
 
-        let model = AirFlowModel::new(&simple_model, &mut state_header, 1).expect("Could not build AirFlow model");
-        let mut state = state_header.take_values().expect("Could not take values form SimualationStateHeader");
+        let model = AirFlowModel::new(&simple_model, &mut state_header, 1)
+            .expect("Could not build AirFlow model");
+        let mut state = state_header
+            .take_values()
+            .expect("Could not take values form SimualationStateHeader");
 
-        /* 
+        /*
         This test is essentially the same as in test_design_blast_flow_rate().
 
         "At a winter condition of 40◦C deltaT and 6 m/s
         (13.4 mph) windspeed, these coefficients would increase the infiltration
         rate by a factor of 2.75."
         */
-        let space_temp = space.dry_bulb_temperature(&state).expect("Could not get Dry BUlb Temp from space");
+        let space_temp = space
+            .dry_bulb_temperature(&state)
+            .expect("Could not get Dry BUlb Temp from space");
         let mut weather = SyntheticWeather::new();
         weather.dry_bulb_temperature = Box::new(ScheduleConstant::new(space_temp - 40.));
         weather.wind_speed = Box::new(ScheduleConstant::new(6.));
 
-        let date = Date{
-            month: 1, day: 1, hour: 10.
+        let date = Date {
+            month: 1,
+            day: 1,
+            hour: 10.,
         };
 
         // It should be initialized as Zero
         let inf = space.infiltration_volume(&state).unwrap();
         assert!(inf < 1e-9);
 
-        model.march(date, &weather, &simple_model, &mut state).unwrap();
+        model
+            .march(date, &weather, &simple_model, &mut state)
+            .unwrap();
 
         // Check values.
         let inf = space.infiltration_volume(&state).unwrap();
         assert!((1.34 - inf).abs() < 0.02);
 
-
         // ... A windspeed of 4.47 m/s (10 mph) gives a factor of 1.0.
         let mut weather = SyntheticWeather::new();
         weather.dry_bulb_temperature = Box::new(ScheduleConstant::new(space_temp - 40.));
         weather.wind_speed = Box::new(ScheduleConstant::new(4.47));
-        model.march(date, &weather, &simple_model, &mut state).unwrap();
+        model
+            .march(date, &weather, &simple_model, &mut state)
+            .unwrap();
 
         // Check values.
         let inf = space.infiltration_volume(&state).unwrap();
         assert!((1. - inf).abs() < 0.02);
-
-
-
     }
 }

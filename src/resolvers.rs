@@ -2,16 +2,12 @@ use crate::model::Resolver;
 use crate::Float;
 use std::rc::Rc;
 
-use simple_model::{
-    Building, ShelterClass, 
-    SimulationState, 
-    Space
-};
+use simple_model::{Building, ShelterClass, SimulationState, Space};
 
 use crate::eplus::*;
 use weather::CurrentWeather;
 
-pub fn constant_resolver(space: &Rc<Space>, v: Float) -> Result<Resolver,String> {
+pub fn constant_resolver(space: &Rc<Space>, v: Float) -> Result<Resolver, String> {
     let space_clone = Rc::clone(space);
     Ok(Box::new(
         move |current_weather: &CurrentWeather, state: &mut SimulationState| {
@@ -27,7 +23,7 @@ pub fn constant_resolver(space: &Rc<Space>, v: Float) -> Result<Resolver,String>
     ))
 }
 
-pub fn blast_resolver(space: &Rc<Space>, v: Float) -> Result<Resolver,String> {
+pub fn blast_resolver(space: &Rc<Space>, v: Float) -> Result<Resolver, String> {
     let space_clone = Rc::clone(space);
     Ok(Box::new(
         move |current_weather: &CurrentWeather, state: &mut SimulationState| {
@@ -44,7 +40,7 @@ pub fn blast_resolver(space: &Rc<Space>, v: Float) -> Result<Resolver,String> {
     ))
 }
 
-pub fn doe2_resolver(space: &Rc<Space>, v: Float) -> Result<Resolver,String> {
+pub fn doe2_resolver(space: &Rc<Space>, v: Float) -> Result<Resolver, String> {
     let space_clone = Rc::clone(space);
     Ok(Box::new(
         move |current_weather: &CurrentWeather, state: &mut SimulationState| {
@@ -68,7 +64,7 @@ pub fn design_flow_rate_resolver(
     c: Float,
     d: Float,
     v: Float,
-) -> Result<Resolver,String> {
+) -> Result<Resolver, String> {
     let space_clone = Rc::clone(space);
     Ok(Box::new(
         move |current_weather: &CurrentWeather, state: &mut SimulationState| {
@@ -85,13 +81,13 @@ pub fn design_flow_rate_resolver(
     ))
 }
 
-fn resolve_stack_coefficient(space: &Rc<Space>, building: &Rc<Building>)->Result<Float,String>{
+fn resolve_stack_coefficient(space: &Rc<Space>, building: &Rc<Building>) -> Result<Float, String> {
     let cs = match building.stack_coefficient() {
         Ok(v)=>*v,
         Err(_)=>{
             match building.n_storeys(){
-                Ok(storeys)=>{   
-                    let n_storeys = *storeys;                 
+                Ok(storeys)=>{
+                    let n_storeys = *storeys;
                     if n_storeys == 0{
                         return Err(format!("Building '{}' has 0 storeys", building.name));
                     }else if n_storeys == 1 {
@@ -110,13 +106,12 @@ fn resolve_stack_coefficient(space: &Rc<Space>, building: &Rc<Building>)->Result
         }
     };
     Ok(cs)
-
 }
 
-fn resolve_wind_coefficient(space: &Rc<Space>, building: &Rc<Building>)->Result<Float,String>{
+fn resolve_wind_coefficient(space: &Rc<Space>, building: &Rc<Building>) -> Result<Float, String> {
     let cw = match building.wind_coefficient() {
-        Ok(v)=>*v,
-        Err(_)=>{
+        Ok(v) => *v,
+        Err(_) => {
             let n_storeys = match building.n_storeys(){
                 Ok(storeys)=>*storeys,
                 Err(_)=>{return Err(format!("Building '{}', associated with Space '{}' has not been assigned an n_storeys field... Cannot resolve Wind Coefficient for EffectiveAirLeakageArea infiltration", building.name, space.name))}
@@ -178,13 +173,9 @@ fn resolve_wind_coefficient(space: &Rc<Space>, building: &Rc<Building>)->Result<
     Ok(cw)
 }
 
-
-
-pub fn effective_air_leakage_resolver(space: &Rc<Space>, al: Float) -> Result<Resolver,String> {
+pub fn effective_air_leakage_resolver(space: &Rc<Space>, al: Float) -> Result<Resolver, String> {
     // We need data from the building.
     if let Ok(building) = space.building() {
-        
-
         let cs = resolve_stack_coefficient(space, building)?;
         let cw = resolve_wind_coefficient(space, building)?;
 
@@ -198,7 +189,8 @@ pub fn effective_air_leakage_resolver(space: &Rc<Space>, al: Float) -> Result<Re
                 space_clone.set_infiltration_temperature(state, outdoor_temperature);
 
                 // Set volume
-                let volume = effective_leakage_area(&current_weather, &space_clone, state, al, cw, cs);
+                let volume =
+                    effective_leakage_area(&current_weather, &space_clone, state, al, cw, cs);
                 space_clone.set_infiltration_volume(state, volume);
             },
         ))
