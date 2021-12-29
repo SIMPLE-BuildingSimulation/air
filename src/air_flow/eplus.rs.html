@@ -324,7 +324,7 @@ SOFTWARE.
     <span class="ident">b</span>: <span class="ident">Float</span>,
     <span class="ident">c</span>: <span class="ident">Float</span>,
     <span class="ident">d</span>: <span class="ident">Float</span>,
-) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Float</span> {
+) -&gt; <span class="ident">Float</span> {
     <span class="kw">let</span> <span class="ident">t_space</span> <span class="op">=</span> <span class="ident">space</span>
         .<span class="ident">dry_bulb_temperature</span>(<span class="ident">state</span>)
         .<span class="ident">expect</span>(<span class="string">&quot;Space does not have Dry Bulb temperature&quot;</span>);
@@ -344,7 +344,7 @@ SOFTWARE.
     <span class="ident">space</span>: <span class="kw-2">&amp;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Space</span><span class="op">&gt;</span>,
     <span class="ident">state</span>: <span class="kw-2">&amp;</span><span class="ident">SimulationState</span>,
     <span class="ident">design_rate</span>: <span class="ident">Float</span>,
-) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Float</span> {
+) -&gt; <span class="ident">Float</span> {
     <span class="ident">design_flow_rate</span>(
         <span class="ident">weather</span>,
         <span class="ident">space</span>,
@@ -363,7 +363,7 @@ SOFTWARE.
     <span class="ident">space</span>: <span class="kw-2">&amp;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Space</span><span class="op">&gt;</span>,
     <span class="ident">state</span>: <span class="kw-2">&amp;</span><span class="ident">SimulationState</span>,
     <span class="ident">design_rate</span>: <span class="ident">Float</span>,
-) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Float</span> {
+) -&gt; <span class="ident">Float</span> {
     <span class="ident">design_flow_rate</span>(<span class="ident">weather</span>, <span class="ident">space</span>, <span class="ident">state</span>, <span class="ident">design_rate</span>, <span class="number">0.</span>, <span class="number">0.</span>, <span class="number">0.224</span>, <span class="number">0.</span>)
 }
 
@@ -374,7 +374,7 @@ SOFTWARE.
     <span class="ident">area</span>: <span class="ident">Float</span>,
     <span class="ident">cw</span>: <span class="ident">Float</span>,
     <span class="ident">cs</span>: <span class="ident">Float</span>,
-) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Float</span> {
+) -&gt; <span class="ident">Float</span> {
     <span class="kw">let</span> <span class="ident">outdoor_temp</span> <span class="op">=</span> <span class="ident">weather</span>
         .<span class="ident">dry_bulb_temperature</span>
         .<span class="ident">expect</span>(<span class="string">&quot;Weather provided does not include DryBulb Temperature&quot;</span>);
@@ -383,8 +383,8 @@ SOFTWARE.
         .<span class="ident">expect</span>(<span class="string">&quot;Space has no Dry-bulb temperature&quot;</span>);
     <span class="kw">let</span> <span class="ident">delta_t</span> <span class="op">=</span> (<span class="ident">outdoor_temp</span> <span class="op">-</span> <span class="ident">space_temp</span>).<span class="ident">abs</span>();
     <span class="kw">let</span> <span class="ident">ws</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">weather</span>.<span class="ident">wind_speed</span> {
-        <span class="prelude-val">Some</span>(<span class="ident">v</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">v</span>,
-        <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">0.0</span>,
+        <span class="prelude-val">Some</span>(<span class="ident">v</span>) =&gt; <span class="ident">v</span>,
+        <span class="prelude-val">None</span> =&gt; <span class="number">0.0</span>,
     };
 
     (<span class="ident">area</span> <span class="op">/</span> <span class="number">1000.</span>) <span class="op">*</span> (<span class="ident">cs</span> <span class="op">*</span> <span class="ident">delta_t</span> <span class="op">+</span> <span class="ident">cw</span> <span class="op">*</span> <span class="ident">ws</span> <span class="op">*</span> <span class="ident">ws</span>).<span class="ident">sqrt</span>()

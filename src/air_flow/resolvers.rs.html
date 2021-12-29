@@ -241,7 +241,7 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::eplus</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">weather::CurrentWeather</span>;
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">constant_resolver</span>(<span class="ident">space</span>: <span class="kw-2">&amp;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Space</span><span class="op">&gt;</span>, <span class="ident">v</span>: <span class="ident">Float</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Resolver</span>, <span class="ident">String</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">constant_resolver</span>(<span class="ident">space</span>: <span class="kw-2">&amp;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Space</span><span class="op">&gt;</span>, <span class="ident">v</span>: <span class="ident">Float</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Resolver</span>, <span class="ident">String</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">space_clone</span> <span class="op">=</span> <span class="ident">Rc::clone</span>(<span class="ident">space</span>);
     <span class="prelude-val">Ok</span>(<span class="ident">Box::new</span>(
         <span class="kw">move</span> <span class="op">|</span><span class="ident">current_weather</span>: <span class="kw-2">&amp;</span><span class="ident">CurrentWeather</span>, <span class="ident">state</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">SimulationState</span><span class="op">|</span> {
@@ -257,7 +257,7 @@
     ))
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">blast_resolver</span>(<span class="ident">space</span>: <span class="kw-2">&amp;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Space</span><span class="op">&gt;</span>, <span class="ident">v</span>: <span class="ident">Float</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Resolver</span>, <span class="ident">String</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">blast_resolver</span>(<span class="ident">space</span>: <span class="kw-2">&amp;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Space</span><span class="op">&gt;</span>, <span class="ident">v</span>: <span class="ident">Float</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Resolver</span>, <span class="ident">String</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">space_clone</span> <span class="op">=</span> <span class="ident">Rc::clone</span>(<span class="ident">space</span>);
     <span class="prelude-val">Ok</span>(<span class="ident">Box::new</span>(
         <span class="kw">move</span> <span class="op">|</span><span class="ident">current_weather</span>: <span class="kw-2">&amp;</span><span class="ident">CurrentWeather</span>, <span class="ident">state</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">SimulationState</span><span class="op">|</span> {
@@ -274,7 +274,7 @@
     ))
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">doe2_resolver</span>(<span class="ident">space</span>: <span class="kw-2">&amp;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Space</span><span class="op">&gt;</span>, <span class="ident">v</span>: <span class="ident">Float</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Resolver</span>, <span class="ident">String</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">doe2_resolver</span>(<span class="ident">space</span>: <span class="kw-2">&amp;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Space</span><span class="op">&gt;</span>, <span class="ident">v</span>: <span class="ident">Float</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Resolver</span>, <span class="ident">String</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">space_clone</span> <span class="op">=</span> <span class="ident">Rc::clone</span>(<span class="ident">space</span>);
     <span class="prelude-val">Ok</span>(<span class="ident">Box::new</span>(
         <span class="kw">move</span> <span class="op">|</span><span class="ident">current_weather</span>: <span class="kw-2">&amp;</span><span class="ident">CurrentWeather</span>, <span class="ident">state</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">SimulationState</span><span class="op">|</span> {
@@ -298,7 +298,7 @@
     <span class="ident">c</span>: <span class="ident">Float</span>,
     <span class="ident">d</span>: <span class="ident">Float</span>,
     <span class="ident">v</span>: <span class="ident">Float</span>,
-) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Resolver</span>, <span class="ident">String</span><span class="op">&gt;</span> {
+) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Resolver</span>, <span class="ident">String</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">space_clone</span> <span class="op">=</span> <span class="ident">Rc::clone</span>(<span class="ident">space</span>);
     <span class="prelude-val">Ok</span>(<span class="ident">Box::new</span>(
         <span class="kw">move</span> <span class="op">|</span><span class="ident">current_weather</span>: <span class="kw-2">&amp;</span><span class="ident">CurrentWeather</span>, <span class="ident">state</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">SimulationState</span><span class="op">|</span> {
@@ -315,84 +315,84 @@
     ))
 }
 
-<span class="kw">fn</span> <span class="ident">resolve_stack_coefficient</span>(<span class="ident">space</span>: <span class="kw-2">&amp;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Space</span><span class="op">&gt;</span>, <span class="ident">building</span>: <span class="kw-2">&amp;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Building</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Float</span>, <span class="ident">String</span><span class="op">&gt;</span> {
+<span class="kw">fn</span> <span class="ident">resolve_stack_coefficient</span>(<span class="ident">space</span>: <span class="kw-2">&amp;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Space</span><span class="op">&gt;</span>, <span class="ident">building</span>: <span class="kw-2">&amp;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Building</span><span class="op">&gt;</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Float</span>, <span class="ident">String</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">cs</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">building</span>.<span class="ident">stack_coefficient</span>() {
-        <span class="prelude-val">Ok</span>(<span class="ident">v</span>)<span class="op">=</span><span class="op">&gt;</span><span class="kw-2">*</span><span class="ident">v</span>,
-        <span class="prelude-val">Err</span>(<span class="kw">_</span>)<span class="op">=</span><span class="op">&gt;</span>{
+        <span class="prelude-val">Ok</span>(<span class="ident">v</span>)=&gt;<span class="kw-2">*</span><span class="ident">v</span>,
+        <span class="prelude-val">Err</span>(<span class="kw">_</span>)=&gt;{
             <span class="kw">match</span> <span class="ident">building</span>.<span class="ident">n_storeys</span>(){
-                <span class="prelude-val">Ok</span>(<span class="ident">storeys</span>)<span class="op">=</span><span class="op">&gt;</span>{
+                <span class="prelude-val">Ok</span>(<span class="ident">storeys</span>)=&gt;{
                     <span class="kw">let</span> <span class="ident">n_storeys</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">storeys</span>;
-                    <span class="kw">if</span> <span class="ident">n_storeys</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span>{
+                    <span class="kw">if</span> <span class="ident">n_storeys</span> <span class="op">==</span> <span class="number">0</span>{
                         <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">format!</span>(<span class="string">&quot;Building &#39;{}&#39; has 0 storeys&quot;</span>, <span class="ident">building</span>.<span class="ident">name</span>));
-                    }<span class="kw">else</span> <span class="kw">if</span> <span class="ident">n_storeys</span> <span class="op">=</span><span class="op">=</span> <span class="number">1</span> {
+                    }<span class="kw">else</span> <span class="kw">if</span> <span class="ident">n_storeys</span> <span class="op">==</span> <span class="number">1</span> {
                         <span class="number">0.000145</span>
-                    }<span class="kw">else</span> <span class="kw">if</span> <span class="ident">n_storeys</span> <span class="op">=</span><span class="op">=</span> <span class="number">2</span> {
+                    }<span class="kw">else</span> <span class="kw">if</span> <span class="ident">n_storeys</span> <span class="op">==</span> <span class="number">2</span> {
                         <span class="number">0.000290</span>
-                    }<span class="kw">else</span> <span class="kw">if</span> <span class="ident">n_storeys</span> <span class="op">=</span><span class="op">=</span> <span class="number">3</span> {
+                    }<span class="kw">else</span> <span class="kw">if</span> <span class="ident">n_storeys</span> <span class="op">==</span> <span class="number">3</span> {
                         <span class="number">0.000435</span>
                     }<span class="kw">else</span> {
                         <span class="macro">eprintln!</span>(<span class="string">&quot;The Infiltration::EffectiveAirLeakageArea object (used in Space &#39;{}&#39;) is appropriate for Building up to about 3 storeys... Building is {} storeys&quot;</span>, <span class="ident">space</span>.<span class="ident">name</span>, <span class="ident">storeys</span>);
                         <span class="number">0.000435</span>
                     }
                 },
-                <span class="prelude-val">Err</span>(<span class="kw">_</span>)<span class="op">=</span><span class="op">&gt;</span><span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">format!</span>(<span class="string">&quot;Space &#39;{}&#39; has been assigned an Infiltration::EffectiveAirLeakageArea but its associated building has not enough data... Please assign values to the Building&#39;s stack_coefficient or n_storey fields&quot;</span>, <span class="ident">space</span>.<span class="ident">name</span>))
+                <span class="prelude-val">Err</span>(<span class="kw">_</span>)=&gt;<span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">format!</span>(<span class="string">&quot;Space &#39;{}&#39; has been assigned an Infiltration::EffectiveAirLeakageArea but its associated building has not enough data... Please assign values to the Building&#39;s stack_coefficient or n_storey fields&quot;</span>, <span class="ident">space</span>.<span class="ident">name</span>))
             }
         }
     };
     <span class="prelude-val">Ok</span>(<span class="ident">cs</span>)
 }
 
-<span class="kw">fn</span> <span class="ident">resolve_wind_coefficient</span>(<span class="ident">space</span>: <span class="kw-2">&amp;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Space</span><span class="op">&gt;</span>, <span class="ident">building</span>: <span class="kw-2">&amp;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Building</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Float</span>, <span class="ident">String</span><span class="op">&gt;</span> {
+<span class="kw">fn</span> <span class="ident">resolve_wind_coefficient</span>(<span class="ident">space</span>: <span class="kw-2">&amp;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Space</span><span class="op">&gt;</span>, <span class="ident">building</span>: <span class="kw-2">&amp;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Building</span><span class="op">&gt;</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Float</span>, <span class="ident">String</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">cw</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">building</span>.<span class="ident">wind_coefficient</span>() {
-        <span class="prelude-val">Ok</span>(<span class="ident">v</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">*</span><span class="ident">v</span>,
-        <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> {
+        <span class="prelude-val">Ok</span>(<span class="ident">v</span>) =&gt; <span class="kw-2">*</span><span class="ident">v</span>,
+        <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; {
             <span class="kw">let</span> <span class="ident">n_storeys</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">building</span>.<span class="ident">n_storeys</span>(){
-                <span class="prelude-val">Ok</span>(<span class="ident">storeys</span>)<span class="op">=</span><span class="op">&gt;</span><span class="kw-2">*</span><span class="ident">storeys</span>,
-                <span class="prelude-val">Err</span>(<span class="kw">_</span>)<span class="op">=</span><span class="op">&gt;</span>{<span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">format!</span>(<span class="string">&quot;Building &#39;{}&#39;, associated with Space &#39;{}&#39; has not been assigned an n_storeys field... Cannot resolve Wind Coefficient for EffectiveAirLeakageArea infiltration&quot;</span>, <span class="ident">building</span>.<span class="ident">name</span>, <span class="ident">space</span>.<span class="ident">name</span>))}
+                <span class="prelude-val">Ok</span>(<span class="ident">storeys</span>)=&gt;<span class="kw-2">*</span><span class="ident">storeys</span>,
+                <span class="prelude-val">Err</span>(<span class="kw">_</span>)=&gt;{<span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">format!</span>(<span class="string">&quot;Building &#39;{}&#39;, associated with Space &#39;{}&#39; has not been assigned an n_storeys field... Cannot resolve Wind Coefficient for EffectiveAirLeakageArea infiltration&quot;</span>, <span class="ident">building</span>.<span class="ident">name</span>, <span class="ident">space</span>.<span class="ident">name</span>))}
             };
             <span class="kw">match</span> <span class="ident">building</span>.<span class="ident">shelter_class</span>(){
-                <span class="prelude-val">Ok</span>(<span class="ident">shelter</span>)<span class="op">=</span><span class="op">&gt;</span>{
+                <span class="prelude-val">Ok</span>(<span class="ident">shelter</span>)=&gt;{
                     <span class="kw">match</span> <span class="ident">shelter</span>{
-                        <span class="ident">ShelterClass::NoObstructions</span><span class="op">=</span><span class="op">&gt;</span>{
-                            <span class="kw">if</span> <span class="ident">n_storeys</span> <span class="op">=</span><span class="op">=</span> <span class="number">1</span> {
+                        <span class="ident">ShelterClass::NoObstructions</span>=&gt;{
+                            <span class="kw">if</span> <span class="ident">n_storeys</span> <span class="op">==</span> <span class="number">1</span> {
                                 <span class="number">0.000319</span>
-                            }<span class="kw">else</span> <span class="kw">if</span> <span class="ident">n_storeys</span> <span class="op">=</span><span class="op">=</span> <span class="number">2</span> {
+                            }<span class="kw">else</span> <span class="kw">if</span> <span class="ident">n_storeys</span> <span class="op">==</span> <span class="number">2</span> {
                                 <span class="number">0.000420</span>
                             }<span class="kw">else</span>{
                                 <span class="number">0.000494</span>
                             }
                         },
-                        <span class="ident">ShelterClass::IsolatedRural</span><span class="op">=</span><span class="op">&gt;</span>{
-                            <span class="kw">if</span> <span class="ident">n_storeys</span> <span class="op">=</span><span class="op">=</span> <span class="number">1</span> {
+                        <span class="ident">ShelterClass::IsolatedRural</span>=&gt;{
+                            <span class="kw">if</span> <span class="ident">n_storeys</span> <span class="op">==</span> <span class="number">1</span> {
                                 <span class="number">0.000246</span>
-                            }<span class="kw">else</span> <span class="kw">if</span> <span class="ident">n_storeys</span> <span class="op">=</span><span class="op">=</span> <span class="number">2</span> {
+                            }<span class="kw">else</span> <span class="kw">if</span> <span class="ident">n_storeys</span> <span class="op">==</span> <span class="number">2</span> {
                                 <span class="number">0.000325</span>
                             }<span class="kw">else</span>{
                                 <span class="number">0.000382</span>
                             }
                         },
-                        <span class="ident">ShelterClass::Urban</span><span class="op">=</span><span class="op">&gt;</span>{
-                            <span class="kw">if</span> <span class="ident">n_storeys</span> <span class="op">=</span><span class="op">=</span> <span class="number">1</span> {
+                        <span class="ident">ShelterClass::Urban</span>=&gt;{
+                            <span class="kw">if</span> <span class="ident">n_storeys</span> <span class="op">==</span> <span class="number">1</span> {
                                 <span class="number">0.000172</span>
-                            }<span class="kw">else</span> <span class="kw">if</span> <span class="ident">n_storeys</span> <span class="op">=</span><span class="op">=</span> <span class="number">2</span> {
+                            }<span class="kw">else</span> <span class="kw">if</span> <span class="ident">n_storeys</span> <span class="op">==</span> <span class="number">2</span> {
                                 <span class="number">0.000231</span>
                             }<span class="kw">else</span>{
                                 <span class="number">0.000271</span>
                             }
                         },
-                        <span class="ident">ShelterClass::LargeLotUrban</span><span class="op">=</span><span class="op">&gt;</span>{
-                            <span class="kw">if</span> <span class="ident">n_storeys</span> <span class="op">=</span><span class="op">=</span> <span class="number">1</span> {
+                        <span class="ident">ShelterClass::LargeLotUrban</span>=&gt;{
+                            <span class="kw">if</span> <span class="ident">n_storeys</span> <span class="op">==</span> <span class="number">1</span> {
                                 <span class="number">0.000104</span>
-                            }<span class="kw">else</span> <span class="kw">if</span> <span class="ident">n_storeys</span> <span class="op">=</span><span class="op">=</span> <span class="number">2</span> {
+                            }<span class="kw">else</span> <span class="kw">if</span> <span class="ident">n_storeys</span> <span class="op">==</span> <span class="number">2</span> {
                                 <span class="number">0.000137</span>
                             }<span class="kw">else</span>{
                                 <span class="number">0.000161</span>
                             }
                         },
-                        <span class="ident">ShelterClass::SmallLotUrban</span><span class="op">=</span><span class="op">&gt;</span>{
-                            <span class="kw">if</span> <span class="ident">n_storeys</span> <span class="op">=</span><span class="op">=</span> <span class="number">1</span> {
+                        <span class="ident">ShelterClass::SmallLotUrban</span>=&gt;{
+                            <span class="kw">if</span> <span class="ident">n_storeys</span> <span class="op">==</span> <span class="number">1</span> {
                                 <span class="number">0.000032</span>
-                            }<span class="kw">else</span> <span class="kw">if</span> <span class="ident">n_storeys</span> <span class="op">=</span><span class="op">=</span> <span class="number">2</span> {
+                            }<span class="kw">else</span> <span class="kw">if</span> <span class="ident">n_storeys</span> <span class="op">==</span> <span class="number">2</span> {
                                 <span class="number">0.000042</span>
                             }<span class="kw">else</span>{
                                 <span class="number">0.000049</span>
@@ -400,14 +400,14 @@
                         },
                     }
                 },
-                <span class="prelude-val">Err</span>(<span class="kw">_</span>)<span class="op">=</span><span class="op">&gt;</span><span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">format!</span>(<span class="string">&quot;Space &#39;{}&#39; has been assigned an Infiltration::EffectiveAirLeakageArea but its associated building has not enough data... Please assign values to the Building&#39;s wind_coefficient or shelter_class and n_storeys fields&quot;</span>, <span class="ident">space</span>.<span class="ident">name</span>))
+                <span class="prelude-val">Err</span>(<span class="kw">_</span>)=&gt;<span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">format!</span>(<span class="string">&quot;Space &#39;{}&#39; has been assigned an Infiltration::EffectiveAirLeakageArea but its associated building has not enough data... Please assign values to the Building&#39;s wind_coefficient or shelter_class and n_storeys fields&quot;</span>, <span class="ident">space</span>.<span class="ident">name</span>))
             }
         }
     };
     <span class="prelude-val">Ok</span>(<span class="ident">cw</span>)
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">effective_air_leakage_resolver</span>(<span class="ident">space</span>: <span class="kw-2">&amp;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Space</span><span class="op">&gt;</span>, <span class="ident">al</span>: <span class="ident">Float</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Resolver</span>, <span class="ident">String</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">effective_air_leakage_resolver</span>(<span class="ident">space</span>: <span class="kw-2">&amp;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Space</span><span class="op">&gt;</span>, <span class="ident">al</span>: <span class="ident">Float</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Resolver</span>, <span class="ident">String</span><span class="op">&gt;</span> {
     <span class="comment">// We need data from the building.</span>
     <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">building</span>) <span class="op">=</span> <span class="ident">space</span>.<span class="ident">building</span>() {
         <span class="kw">let</span> <span class="ident">cs</span> <span class="op">=</span> <span class="ident">resolve_stack_coefficient</span>(<span class="ident">space</span>, <span class="ident">building</span>)<span class="question-mark">?</span>;
