@@ -126,7 +126,7 @@ mod tests {
         */
 
         // Summer
-        let mut weather = SyntheticWeather::new();
+        let mut weather = SyntheticWeather::default();
         // 0 C of temperature difference
         weather.dry_bulb_temperature = Box::new(ScheduleConstant::new(2.));
         let state = vec![2.];
@@ -149,7 +149,7 @@ mod tests {
         assert!((1. - flow).abs() < 0.02);
 
         // WINTER
-        let mut weather = SyntheticWeather::new();
+        let mut weather = SyntheticWeather::default();
         // 40 C of temperature difference
         weather.dry_bulb_temperature = Box::new(ScheduleConstant::new(-38.));
         let state = vec![2.];
@@ -182,7 +182,7 @@ mod tests {
         */
 
         // Summer
-        let mut weather = SyntheticWeather::new();
+        let mut weather = SyntheticWeather::default();
         // 0 C of temperature difference
         weather.dry_bulb_temperature = Box::new(ScheduleConstant::new(2.));
         let state = vec![2.];
@@ -205,7 +205,7 @@ mod tests {
         assert!((0.75 - flow).abs() < 0.02);
 
         // WINTER
-        let mut weather = SyntheticWeather::new();
+        let mut weather = SyntheticWeather::default();
         // 40 C of temperature difference
         weather.dry_bulb_temperature = Box::new(ScheduleConstant::new(42.));
         let state = vec![2.];
@@ -228,7 +228,7 @@ mod tests {
         assert!((1.34 - flow).abs() < 0.02);
 
         // ... A windspeed of 4.47 m/s (10 mph) gives a factor of 1.0.
-        let mut weather = SyntheticWeather::new();
+        let mut weather = SyntheticWeather::default();
         // 40 C of temperature difference
         weather.dry_bulb_temperature = Box::new(ScheduleConstant::new(42.));
         let state = vec![2.];

@@ -20,8 +20,7 @@ SOFTWARE.
 
 // use crate::Float;
 use calendar::Date;
-use communication_protocols::error_handling::ErrorHandling;
-use communication_protocols::simulation_model::SimulationModel;
+use communication_protocols::{ErrorHandling, MetaOptions, SimulationModel};
 use simple_model::{
     Infiltration, SimpleModel, SimulationState, SimulationStateElement, SimulationStateHeader,
 };
@@ -43,9 +42,12 @@ impl ErrorHandling for AirFlowModel {
 
 impl SimulationModel for AirFlowModel {
     type Type = Self;
+    type OptionType = ();
 
     /// Creates a new AirFlowModel from a SimpleModel.    
     fn new(
+        _meta_options: &MetaOptions,
+        _options: (),
         model: &SimpleModel,
         state: &mut SimulationStateHeader,
         _n: usize,
@@ -119,6 +121,10 @@ mod tests {
     use simple_model::Space;
     use weather::SyntheticWeather;
 
+    const META_OPTIONS : MetaOptions = MetaOptions {
+        latitude: 0., longitude:0., standard_meridian: 0.
+    };
+
     #[test]
     fn test_infiltration() {
         let mut simple_model = SimpleModel::new("model".to_string());
@@ -130,7 +136,7 @@ mod tests {
         space.set_dry_bulb_temperature_index(i);
         let space = simple_model.add_space(space);
 
-        let model = AirFlowModel::new(&simple_model, &mut state_header, 1)
+        let model = AirFlowModel::new(&META_OPTIONS, (), &simple_model, &mut state_header, 1)
             .expect("Could not build AirFlow model");
         let mut state = state_header
             .take_values()
@@ -146,7 +152,7 @@ mod tests {
         let space_temp = space
             .dry_bulb_temperature(&state)
             .expect("Could not get Dry BUlb Temp from space");
-        let mut weather = SyntheticWeather::new();
+        let mut weather = SyntheticWeather::default();
         weather.dry_bulb_temperature = Box::new(ScheduleConstant::new(space_temp - 40.));
         weather.wind_speed = Box::new(ScheduleConstant::new(6.));
 
@@ -169,7 +175,7 @@ mod tests {
         assert!((1.34 - inf).abs() < 0.02);
 
         // ... A windspeed of 4.47 m/s (10 mph) gives a factor of 1.0.
-        let mut weather = SyntheticWeather::new();
+        let mut weather = SyntheticWeather::default();
         weather.dry_bulb_temperature = Box::new(ScheduleConstant::new(space_temp - 40.));
         weather.wind_speed = Box::new(ScheduleConstant::new(4.47));
         model
