@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["eplus",""],["model",""],["resolvers",""]],"type":[["Float",""]]});
+window.SIDEBAR_ITEMS = {"mod":[["eplus",""],["model",""],["resolvers",""]],"type":[["Float",""]]};

@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["AirFlowModel",""]],"type":[["Resolver",""]]});
+window.SIDEBAR_ITEMS = {"struct":[["AirFlowModel",""]],"type":[["Resolver",""]]};
