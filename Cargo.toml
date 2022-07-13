@@ -17,5 +17,5 @@ schedule = { git = "https://github.com/SIMPLE-BuildingSimulation/schedule.git" }
 
 [features]
 default = []
-float = ["simple_model/float", "weather/float", "calendar/float"]
+float = ["communication_protocols/float","simple_model/float", "weather/float", "calendar/float"]
 

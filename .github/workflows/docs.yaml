@@ -1,39 +1,25 @@
 name: Docs
 
 on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+  workflow_run:
+    workflows: ["Tests"]
+    types:
+      - completed
 
 env:
   CARGO_TERM_COLOR: always
 
-jobs:       
-  format:
-    runs-on: ubuntu-latest        
-    steps: 
-    - uses: actions/checkout@v3   
-    - name: Set Toolchain
-      run: rustup default nightly    
-    - name: format
-      run: cargo fmt 
-  clippy:
-    runs-on: ubuntu-latest  
-    needs: [format]      
-    steps: 
-    - uses: actions/checkout@v3   
-    - name: Set Toolchain
-      run: rustup default nightly    
-    - name: clippy
-      run: cargo clippy > clippy_output.txt                   
-  docs:    
+jobs:
+  build:
+
     runs-on: ubuntu-latest
-    needs: [clippy]
+
     steps:
-    - uses: actions/checkout@v3   
+    - uses: actions/checkout@v3
     - name: Set Toolchain
-      run: rustup default nightly      
+      run: rustup default nightly    
+    - name: Update
+      run: rustup update    
     - name: Build doc
       run: RUSTDOCFLAGS="--html-in-header katex.html" cargo doc --document-private-items --no-deps
     - name: Set Index
