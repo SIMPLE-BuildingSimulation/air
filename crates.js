@@ -1,1 +1,1 @@
-window.ALL_CRATES = ["air_flow"];
+window.ALL_CRATES = ["air"];

@@ -1,3 +1,3 @@
-(function() {var implementors = {};
-implementors["air_flow"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/core/marker/trait.Freeze.html\" title=\"trait core::marker::Freeze\">Freeze</a> for <a class=\"struct\" href=\"air_flow/model/struct.AirFlowModel.html\" title=\"struct air_flow::model::AirFlowModel\">AirFlowModel</a>","synthetic":true,"types":["air_flow::model::AirFlowModel"]}];
-if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
+(function() {var implementors = {
+"air":[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/core/marker/trait.Freeze.html\" title=\"trait core::marker::Freeze\">Freeze</a> for <a class=\"struct\" href=\"air/model/struct.AirFlowModel.html\" title=\"struct air::model::AirFlowModel\">AirFlowModel</a>",1,["air::model::AirFlowModel"]]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
