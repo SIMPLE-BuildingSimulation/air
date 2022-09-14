@@ -97,10 +97,10 @@ impl SimulationModel for AirFlowModel {
     /// Advances one main_timestep through time. That is,
     /// it performs `self.dt_subdivisions` steps, advancing
     /// `self.dt` seconds in each of them.
-    fn march(
+    fn march<W: Weather>(
         &self,
         date: Date,
-        weather: &dyn Weather,
+        weather: &W,
         _model: &SimpleModel,
         state: &mut SimulationState,
     ) -> Result<(), String> {
@@ -122,7 +122,7 @@ mod tests {
     use weather::SyntheticWeather;
 
     const META_OPTIONS : MetaOptions = MetaOptions {
-        latitude: 0., longitude:0., standard_meridian: 0.
+        latitude: 0., longitude:0., standard_meridian: 0., elevation: 0.0,
     };
 
     #[test]
