@@ -4,7 +4,7 @@
 ![docs badge](https://github.com/SIMPLE-BuildingSimulation/air/actions/workflows/docs.yaml/badge.svg)
 ![tests badge](https://github.com/SIMPLE-BuildingSimulation/air/actions/workflows/tests.yaml/badge.svg)
 ![tests badge](https://github.com/SIMPLE-BuildingSimulation/air/actions/workflows/style.yaml/badge.svg)
-[![codecov](https://codecov.io/gh/SIMPLE-BuildingSimulation/air/branch/master/graph/badge.svg?token=GFAQ8LPXK0)](https://codecov.io/gh/SIMPLE-BuildingSimulation/air)
+[![codecov](https://codecov.io/gh/SIMPLE-BuildingSimulation/air/branch/main/graph/badge.svg?token=GFAQ8LPXK0)](https://codecov.io/gh/SIMPLE-BuildingSimulation/air)
 
 This is the SIMPLE Module dedicated to calculate Infiltrations and Ventilation.
 
