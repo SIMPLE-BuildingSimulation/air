@@ -232,11 +232,16 @@
 <span id="198">198</span>
 <span id="199">199</span>
 <span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::model::Resolver</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::Float</span>;
 <span class="kw">use</span> <span class="ident">std::rc::Rc</span>;
 
-<span class="kw">use</span> <span class="ident">simple_model</span>::{<span class="ident">Building</span>, <span class="ident">ShelterClass</span>, <span class="ident">SimulationState</span>, <span class="ident">Space</span>};
+<span class="kw">use</span> <span class="ident">simple_model</span>::{<span class="ident">Building</span>, <span class="ident">ShelterClass</span>, <span class="ident">SimpleModel</span>, <span class="ident">SimulationState</span>, <span class="ident">Space</span>};
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::eplus</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">weather::CurrentWeather</span>;
@@ -407,11 +412,16 @@
     <span class="prelude-val">Ok</span>(<span class="ident">cw</span>)
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">effective_air_leakage_resolver</span>(<span class="ident">space</span>: <span class="kw-2">&amp;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Space</span><span class="op">&gt;</span>, <span class="ident">al</span>: <span class="ident">Float</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Resolver</span>, <span class="ident">String</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">effective_air_leakage_resolver</span>(
+    <span class="ident">space</span>: <span class="kw-2">&amp;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Space</span><span class="op">&gt;</span>,
+    <span class="ident">model</span>: <span class="kw-2">&amp;</span><span class="ident">SimpleModel</span>,
+    <span class="ident">al</span>: <span class="ident">Float</span>,
+) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Resolver</span>, <span class="ident">String</span><span class="op">&gt;</span> {
     <span class="comment">// We need data from the building.</span>
-    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">building</span>) <span class="op">=</span> <span class="ident">space</span>.<span class="ident">building</span>() {
-        <span class="kw">let</span> <span class="ident">cs</span> <span class="op">=</span> <span class="ident">resolve_stack_coefficient</span>(<span class="ident">space</span>, <span class="ident">building</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">cw</span> <span class="op">=</span> <span class="ident">resolve_wind_coefficient</span>(<span class="ident">space</span>, <span class="ident">building</span>)<span class="question-mark">?</span>;
+    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">b_name</span>) <span class="op">=</span> <span class="ident">space</span>.<span class="ident">building</span>() {
+        <span class="kw">let</span> <span class="ident">building</span> <span class="op">=</span> <span class="ident">model</span>.<span class="ident">get_building</span>(<span class="ident">b_name</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">cs</span> <span class="op">=</span> <span class="ident">resolve_stack_coefficient</span>(<span class="ident">space</span>, <span class="kw-2">&amp;</span><span class="ident">building</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">cw</span> <span class="op">=</span> <span class="ident">resolve_wind_coefficient</span>(<span class="ident">space</span>, <span class="kw-2">&amp;</span><span class="ident">building</span>)<span class="question-mark">?</span>;
 
         <span class="kw">let</span> <span class="ident">space_clone</span> <span class="op">=</span> <span class="ident">Rc::clone</span>(<span class="ident">space</span>);
         <span class="prelude-val">Ok</span>(<span class="ident">Box::new</span>(
