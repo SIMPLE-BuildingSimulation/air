@@ -72,14 +72,14 @@ impl SimulationModel for AirFlowModel {
             // Pre-process infiltration calculations
             if let Ok(infiltration) = space.infiltration() {
                 let infiltration_fn = match infiltration {
-                    Infiltration::Constant(v) => constant_resolver(space, *v)?,
-                    Infiltration::Blast(v) => blast_resolver(space, *v)?,
-                    Infiltration::Doe2(v) => doe2_resolver(space, *v)?,
-                    Infiltration::DesignFlowRate(a, b, c, d, v) => {
-                        design_flow_rate_resolver(space, *a, *b, *c, *d, *v)?
+                    Infiltration::Constant { flow } => constant_resolver(space, *flow)?,
+                    Infiltration::Blast { flow } => blast_resolver(space, *flow)?,
+                    Infiltration::Doe2 { flow } => doe2_resolver(space, *flow)?,
+                    Infiltration::DesignFlowRate { a, b, c, d, phi } => {
+                        design_flow_rate_resolver(space, *a, *b, *c, *d, *phi)?
                     }
-                    Infiltration::EffectiveAirLeakageArea(al) => {
-                        effective_air_leakage_resolver(space, *al)?
+                    Infiltration::EffectiveAirLeakageArea { area } => {
+                        effective_air_leakage_resolver(space, model, *area)?
                     }
                 };
                 infiltration_calcs.push(infiltration_fn);
@@ -121,17 +121,20 @@ mod tests {
     use simple_model::Space;
     use weather::SyntheticWeather;
 
-    const META_OPTIONS : MetaOptions = MetaOptions {
-        latitude: 0., longitude:0., standard_meridian: 0., elevation: 0.0,
+    const META_OPTIONS: MetaOptions = MetaOptions {
+        latitude: 0.,
+        longitude: 0.,
+        standard_meridian: 0.,
+        elevation: 0.0,
     };
 
     #[test]
     fn test_infiltration() {
-        let mut simple_model = SimpleModel::new("model".to_string());
+        let mut simple_model = SimpleModel::default();
         let mut state_header = SimulationStateHeader::new();
 
         let mut space = Space::new("some space".to_string());
-        space.set_infiltration(Infiltration::Doe2(1.));
+        space.set_infiltration(Infiltration::Doe2 { flow: 1. });
         let i = state_header.push(SimulationStateElement::SpaceDryBulbTemperature(0), 22.);
         space.set_dry_bulb_temperature_index(i);
         let space = simple_model.add_space(space);
