@@ -2,7 +2,7 @@ use crate::model::Resolver;
 use crate::Float;
 use std::rc::Rc;
 
-use simple_model::{Building, ShelterClass, SimulationState, Space};
+use simple_model::{Building, ShelterClass, SimpleModel, SimulationState, Space};
 
 use crate::eplus::*;
 use weather::CurrentWeather;
@@ -173,11 +173,16 @@ fn resolve_wind_coefficient(space: &Rc<Space>, building: &Rc<Building>) -> Resul
     Ok(cw)
 }
 
-pub fn effective_air_leakage_resolver(space: &Rc<Space>, al: Float) -> Result<Resolver, String> {
+pub fn effective_air_leakage_resolver(
+    space: &Rc<Space>,
+    model: &SimpleModel,
+    al: Float,
+) -> Result<Resolver, String> {
     // We need data from the building.
-    if let Ok(building) = space.building() {
-        let cs = resolve_stack_coefficient(space, building)?;
-        let cw = resolve_wind_coefficient(space, building)?;
+    if let Ok(b_name) = space.building() {
+        let building = model.get_building(b_name)?;
+        let cs = resolve_stack_coefficient(space, &building)?;
+        let cw = resolve_wind_coefficient(space, &building)?;
 
         let space_clone = Rc::clone(space);
         Ok(Box::new(
