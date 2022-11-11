@@ -25,7 +25,7 @@ use simple_model::{
     Infiltration, SimpleModel, SimulationState, SimulationStateElement, SimulationStateHeader,
 };
 use weather::{CurrentWeather, Weather};
-
+use std::borrow::Borrow;
 use crate::resolvers::*;
 
 pub type Resolver = Box<dyn Fn(&CurrentWeather, &mut SimulationState)>;
@@ -45,16 +45,16 @@ impl SimulationModel for AirFlowModel {
     type OptionType = ();
 
     /// Creates a new AirFlowModel from a SimpleModel.    
-    fn new(
+    fn new<M: Borrow<SimpleModel>>(
         _meta_options: &MetaOptions,
         _options: (),
-        model: &SimpleModel,
+        model: M,
         state: &mut SimulationStateHeader,
         _n: usize,
     ) -> Result<Self, String> {
-        let mut infiltration_calcs = Vec::with_capacity(model.spaces.len());
+        let mut infiltration_calcs = Vec::with_capacity(model.borrow().spaces.len());
 
-        for (i, space) in model.spaces.iter().enumerate() {
+        for (i, space) in model.borrow().spaces.iter().enumerate() {
             // Should these initial values be different?
             let initial_vol = 0.0;
             let initial_temp = 0.0;
@@ -79,7 +79,7 @@ impl SimulationModel for AirFlowModel {
                         design_flow_rate_resolver(space, *a, *b, *c, *d, *phi)?
                     }
                     Infiltration::EffectiveAirLeakageArea { area } => {
-                        effective_air_leakage_resolver(space, model, *area)?
+                        effective_air_leakage_resolver(space, model.borrow(), *area)?
                     }
                 };
                 infiltration_calcs.push(infiltration_fn);
@@ -97,11 +97,11 @@ impl SimulationModel for AirFlowModel {
     /// Advances one main_timestep through time. That is,
     /// it performs `self.dt_subdivisions` steps, advancing
     /// `self.dt` seconds in each of them.
-    fn march<W: Weather>(
+    fn march<W: Weather, M: Borrow<SimpleModel>>(
         &self,
         date: Date,
         weather: &W,
-        _model: &SimpleModel,
+        _model: M,
         state: &mut SimulationState,
     ) -> Result<(), String> {
         // Process infiltration
