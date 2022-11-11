@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/eplus.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>eplus.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.9.0/dist/katex.min.css" integrity="sha384-TEMocfGvRuD1rIAacqrknm5BQZ7W7uWitoih+jMNFXQIbNl16bO8OZmylH/Vi/Ei" crossorigin="anonymous">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/eplus.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>eplus.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.9.0/dist/katex.min.css" integrity="sha384-TEMocfGvRuD1rIAacqrknm5BQZ7W7uWitoih+jMNFXQIbNl16bO8OZmylH/Vi/Ei" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/katex@0.9.0/dist/katex.min.js" integrity="sha384-jmxIlussZWB7qCuB+PgKG1uLjjxbVVIayPJwi6cG6Zb4YKq0JIw+OMnkkEC7kYCq" crossorigin="anonymous"></script>
 <script>
   "use strict";
@@ -303,53 +303,53 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-*/</span>
+*/
 
-<span class="kw">use</span> <span class="ident">std::rc::Rc</span>;
+</span><span class="kw">use </span>std::rc::Rc;
 
-<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::Float</span>;
-<span class="kw">use</span> <span class="ident">simple_model</span>::{<span class="ident">SimulationState</span>, <span class="ident">Space</span>};
-<span class="kw">use</span> <span class="ident">weather::CurrentWeather</span>;
+<span class="kw">use </span><span class="kw">crate</span>::Float;
+<span class="kw">use </span>simple_model::{SimulationState, Space};
+<span class="kw">use </span>weather::CurrentWeather;
 
-<span class="doccomment">/// Calculates an infiltration rate equal to that estimated by</span>
-<span class="doccomment">/// EnergyPlus&#39; `ZoneInfiltration:DesignFlowRate`.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// The equation is $`\phi = \phi_{design} (A + B|T_{space} - T_{outside}| + C\times W_{speed} + D\times W^2_{speed})`$</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">design_flow_rate</span>(
-    <span class="ident">weather</span>: <span class="kw-2">&amp;</span><span class="ident">CurrentWeather</span>,
-    <span class="ident">space</span>: <span class="kw-2">&amp;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Space</span><span class="op">&gt;</span>,
-    <span class="ident">state</span>: <span class="kw-2">&amp;</span><span class="ident">SimulationState</span>,
-    <span class="ident">design_rate</span>: <span class="ident">Float</span>,
-    <span class="ident">a</span>: <span class="ident">Float</span>,
-    <span class="ident">b</span>: <span class="ident">Float</span>,
-    <span class="ident">c</span>: <span class="ident">Float</span>,
-    <span class="ident">d</span>: <span class="ident">Float</span>,
-) -&gt; <span class="ident">Float</span> {
-    <span class="kw">let</span> <span class="ident">t_space</span> <span class="op">=</span> <span class="ident">space</span>
-        .<span class="ident">dry_bulb_temperature</span>(<span class="ident">state</span>)
-        .<span class="ident">expect</span>(<span class="string">&quot;Space does not have Dry Bulb temperature&quot;</span>);
-    <span class="kw">let</span> <span class="ident">t_out</span> <span class="op">=</span> <span class="ident">weather</span>
-        .<span class="ident">dry_bulb_temperature</span>
-        .<span class="ident">expect</span>(<span class="string">&quot;Weather given did not have Dry Bulb temperature&quot;</span>);
-    <span class="kw">let</span> <span class="ident">wind_speed</span> <span class="op">=</span> <span class="ident">weather</span>
-        .<span class="ident">wind_speed</span>
-        .<span class="ident">expect</span>(<span class="string">&quot;Weather does not have Wind Speed&quot;</span>);
+<span class="doccomment">/// Calculates an infiltration rate equal to that estimated by
+/// EnergyPlus&#39; `ZoneInfiltration:DesignFlowRate`.
+///
+/// The equation is $`\phi = \phi_{design} (A + B|T_{space} - T_{outside}| + C\times W_{speed} + D\times W^2_{speed})`$
+</span><span class="kw">pub fn </span>design_flow_rate(
+    weather: <span class="kw-2">&amp;</span>CurrentWeather,
+    space: <span class="kw-2">&amp;</span>Rc&lt;Space&gt;,
+    state: <span class="kw-2">&amp;</span>SimulationState,
+    design_rate: Float,
+    a: Float,
+    b: Float,
+    c: Float,
+    d: Float,
+) -&gt; Float {
+    <span class="kw">let </span>t_space = space
+        .dry_bulb_temperature(state)
+        .expect(<span class="string">&quot;Space does not have Dry Bulb temperature&quot;</span>);
+    <span class="kw">let </span>t_out = weather
+        .dry_bulb_temperature
+        .expect(<span class="string">&quot;Weather given did not have Dry Bulb temperature&quot;</span>);
+    <span class="kw">let </span>wind_speed = weather
+        .wind_speed
+        .expect(<span class="string">&quot;Weather does not have Wind Speed&quot;</span>);
 
-    <span class="ident">design_rate</span> <span class="op">*</span> (<span class="ident">a</span> <span class="op">+</span> <span class="ident">b</span> <span class="op">*</span> (<span class="ident">t_space</span> <span class="op">-</span> <span class="ident">t_out</span>).<span class="ident">abs</span>() <span class="op">+</span> <span class="ident">c</span> <span class="op">*</span> <span class="ident">wind_speed</span> <span class="op">+</span> <span class="ident">d</span> <span class="op">*</span> <span class="ident">wind_speed</span> <span class="op">*</span> <span class="ident">wind_speed</span>)
+    design_rate * (a + b * (t_space - t_out).abs() + c * wind_speed + d * wind_speed * wind_speed)
 }
 
-<span class="doccomment">/// Calculates the design flow rates using the BLAST defaults (reported in EnergyPlus&#39; Input/Output reference)</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">blast_design_flow_rate</span>(
-    <span class="ident">weather</span>: <span class="kw-2">&amp;</span><span class="ident">CurrentWeather</span>,
-    <span class="ident">space</span>: <span class="kw-2">&amp;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Space</span><span class="op">&gt;</span>,
-    <span class="ident">state</span>: <span class="kw-2">&amp;</span><span class="ident">SimulationState</span>,
-    <span class="ident">design_rate</span>: <span class="ident">Float</span>,
-) -&gt; <span class="ident">Float</span> {
-    <span class="ident">design_flow_rate</span>(
-        <span class="ident">weather</span>,
-        <span class="ident">space</span>,
-        <span class="ident">state</span>,
-        <span class="ident">design_rate</span>,
+<span class="doccomment">/// Calculates the design flow rates using the BLAST defaults (reported in EnergyPlus&#39; Input/Output reference)
+</span><span class="kw">pub fn </span>blast_design_flow_rate(
+    weather: <span class="kw-2">&amp;</span>CurrentWeather,
+    space: <span class="kw-2">&amp;</span>Rc&lt;Space&gt;,
+    state: <span class="kw-2">&amp;</span>SimulationState,
+    design_rate: Float,
+) -&gt; Float {
+    design_flow_rate(
+        weather,
+        space,
+        state,
+        design_rate,
         <span class="number">0.606</span>,
         <span class="number">0.03636</span>,
         <span class="number">0.1177</span>,
@@ -357,52 +357,52 @@ SOFTWARE.
     )
 }
 
-<span class="doccomment">/// Calculates the design flow rates using the DOE-2 defaults (reported in EnergyPlus&#39; Input/Output reference)</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">doe2_design_flow_rate</span>(
-    <span class="ident">weather</span>: <span class="kw-2">&amp;</span><span class="ident">CurrentWeather</span>,
-    <span class="ident">space</span>: <span class="kw-2">&amp;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Space</span><span class="op">&gt;</span>,
-    <span class="ident">state</span>: <span class="kw-2">&amp;</span><span class="ident">SimulationState</span>,
-    <span class="ident">design_rate</span>: <span class="ident">Float</span>,
-) -&gt; <span class="ident">Float</span> {
-    <span class="ident">design_flow_rate</span>(<span class="ident">weather</span>, <span class="ident">space</span>, <span class="ident">state</span>, <span class="ident">design_rate</span>, <span class="number">0.</span>, <span class="number">0.</span>, <span class="number">0.224</span>, <span class="number">0.</span>)
+<span class="doccomment">/// Calculates the design flow rates using the DOE-2 defaults (reported in EnergyPlus&#39; Input/Output reference)
+</span><span class="kw">pub fn </span>doe2_design_flow_rate(
+    weather: <span class="kw-2">&amp;</span>CurrentWeather,
+    space: <span class="kw-2">&amp;</span>Rc&lt;Space&gt;,
+    state: <span class="kw-2">&amp;</span>SimulationState,
+    design_rate: Float,
+) -&gt; Float {
+    design_flow_rate(weather, space, state, design_rate, <span class="number">0.</span>, <span class="number">0.</span>, <span class="number">0.224</span>, <span class="number">0.</span>)
 }
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">effective_leakage_area</span>(
-    <span class="ident">weather</span>: <span class="kw-2">&amp;</span><span class="ident">CurrentWeather</span>,
-    <span class="ident">space</span>: <span class="kw-2">&amp;</span><span class="ident">Rc</span><span class="op">&lt;</span><span class="ident">Space</span><span class="op">&gt;</span>,
-    <span class="ident">state</span>: <span class="kw-2">&amp;</span><span class="ident">SimulationState</span>,
-    <span class="ident">area</span>: <span class="ident">Float</span>,
-    <span class="ident">cw</span>: <span class="ident">Float</span>,
-    <span class="ident">cs</span>: <span class="ident">Float</span>,
-) -&gt; <span class="ident">Float</span> {
-    <span class="kw">let</span> <span class="ident">outdoor_temp</span> <span class="op">=</span> <span class="ident">weather</span>
-        .<span class="ident">dry_bulb_temperature</span>
-        .<span class="ident">expect</span>(<span class="string">&quot;Weather provided does not include DryBulb Temperature&quot;</span>);
-    <span class="kw">let</span> <span class="ident">space_temp</span> <span class="op">=</span> <span class="ident">space</span>
-        .<span class="ident">dry_bulb_temperature</span>(<span class="ident">state</span>)
-        .<span class="ident">expect</span>(<span class="string">&quot;Space has no Dry-bulb temperature&quot;</span>);
-    <span class="kw">let</span> <span class="ident">delta_t</span> <span class="op">=</span> (<span class="ident">outdoor_temp</span> <span class="op">-</span> <span class="ident">space_temp</span>).<span class="ident">abs</span>();
-    <span class="kw">let</span> <span class="ident">ws</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">weather</span>.<span class="ident">wind_speed</span> {
-        <span class="prelude-val">Some</span>(<span class="ident">v</span>) =&gt; <span class="ident">v</span>,
-        <span class="prelude-val">None</span> =&gt; <span class="number">0.0</span>,
+<span class="kw">pub fn </span>effective_leakage_area(
+    weather: <span class="kw-2">&amp;</span>CurrentWeather,
+    space: <span class="kw-2">&amp;</span>Rc&lt;Space&gt;,
+    state: <span class="kw-2">&amp;</span>SimulationState,
+    area: Float,
+    cw: Float,
+    cs: Float,
+) -&gt; Float {
+    <span class="kw">let </span>outdoor_temp = weather
+        .dry_bulb_temperature
+        .expect(<span class="string">&quot;Weather provided does not include DryBulb Temperature&quot;</span>);
+    <span class="kw">let </span>space_temp = space
+        .dry_bulb_temperature(state)
+        .expect(<span class="string">&quot;Space has no Dry-bulb temperature&quot;</span>);
+    <span class="kw">let </span>delta_t = (outdoor_temp - space_temp).abs();
+    <span class="kw">let </span>ws = <span class="kw">match </span>weather.wind_speed {
+        <span class="prelude-val">Some</span>(v) =&gt; v,
+        <span class="prelude-val">None </span>=&gt; <span class="number">0.0</span>,
     };
 
-    (<span class="ident">area</span> <span class="op">/</span> <span class="number">1000.</span>) <span class="op">*</span> (<span class="ident">cs</span> <span class="op">*</span> <span class="ident">delta_t</span> <span class="op">+</span> <span class="ident">cw</span> <span class="op">*</span> <span class="ident">ws</span> <span class="op">*</span> <span class="ident">ws</span>).<span class="ident">sqrt</span>()
+    (area / <span class="number">1000.</span>) * (cs * delta_t + cw * ws * ws).sqrt()
 }
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
-<span class="kw">mod</span> <span class="ident">tests</span> {
+<span class="attribute">#[cfg(test)]
+</span><span class="kw">mod </span>tests {
 
-    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
-    <span class="kw">use</span> <span class="ident">calendar::Date</span>;
-    <span class="kw">use</span> <span class="ident">schedule::ScheduleConstant</span>;
-    <span class="kw">use</span> <span class="ident">weather::SyntheticWeather</span>;
-    <span class="kw">use</span> <span class="ident">weather::Weather</span>;
+    <span class="kw">use super</span>::<span class="kw-2">*</span>;
+    <span class="kw">use </span>calendar::Date;
+    <span class="kw">use </span>schedule::ScheduleConstant;
+    <span class="kw">use </span>weather::SyntheticWeather;
+    <span class="kw">use </span>weather::Weather;
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_design_blast_flow_rate</span>() {
-        <span class="comment">/* THIS COMES FROM ENERGY PLUS&#39; INPUT OUTPUT REF */</span>
-        <span class="comment">/*
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>test_design_blast_flow_rate() {
+        <span class="comment">/* THIS COMES FROM ENERGY PLUS&#39; INPUT OUTPUT REF */
+        /*
             &quot;These coefficients produce a value of 1.0 at 0◦C deltaT and
             3.35 m/s (7.5 mph) windspeed, which corresponds to a typical
             summer condition.
@@ -410,133 +410,133 @@ SOFTWARE.
             At a winter condition of 40◦C deltaT and 6 m/s
             (13.4 mph) windspeed, these coefficients would increase the infiltration
             rate by a factor of 2.75.&quot;
-        */</span>
+        */
 
-        <span class="comment">// Summer</span>
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">weather</span> <span class="op">=</span> <span class="ident">SyntheticWeather::default</span>();
-        <span class="comment">// 0 C of temperature difference</span>
-        <span class="ident">weather</span>.<span class="ident">dry_bulb_temperature</span> <span class="op">=</span> <span class="ident">Box::new</span>(<span class="ident">ScheduleConstant::new</span>(<span class="number">2.</span>));
-        <span class="kw">let</span> <span class="ident">state</span> <span class="op">=</span> <span class="macro">vec!</span>[<span class="number">2.</span>];
-        <span class="comment">//</span>
-        <span class="ident">weather</span>.<span class="ident">wind_speed</span> <span class="op">=</span> <span class="ident">Box::new</span>(<span class="ident">ScheduleConstant::new</span>(<span class="number">3.35</span>));
+        // Summer
+        </span><span class="kw">let </span><span class="kw-2">mut </span>weather = SyntheticWeather::default();
+        <span class="comment">// 0 C of temperature difference
+        </span>weather.dry_bulb_temperature = Box::new(ScheduleConstant::new(<span class="number">2.</span>));
+        <span class="kw">let </span>state = <span class="macro">vec!</span>[<span class="number">2.</span>];
+        <span class="comment">//
+        </span>weather.wind_speed = Box::new(ScheduleConstant::new(<span class="number">3.35</span>));
 
-        <span class="kw">let</span> <span class="ident">space</span> <span class="op">=</span> <span class="ident">Space::new</span>(<span class="string">&quot;some space&quot;</span>.<span class="ident">to_string</span>());
-        <span class="ident">space</span>.<span class="ident">set_dry_bulb_temperature_index</span>(<span class="number">0</span>);
-        <span class="kw">let</span> <span class="ident">space</span> <span class="op">=</span> <span class="ident">Rc::new</span>(<span class="ident">space</span>);
+        <span class="kw">let </span>space = Space::new(<span class="string">&quot;some space&quot;</span>.to_string());
+        space.set_dry_bulb_temperature_index(<span class="number">0</span>);
+        <span class="kw">let </span>space = Rc::new(space);
 
-        <span class="kw">let</span> <span class="ident">date</span> <span class="op">=</span> <span class="ident">Date</span> {
-            <span class="ident">month</span>: <span class="number">1</span>,
-            <span class="ident">day</span>: <span class="number">1</span>,
-            <span class="ident">hour</span>: <span class="number">1.</span>,
+        <span class="kw">let </span>date = Date {
+            month: <span class="number">1</span>,
+            day: <span class="number">1</span>,
+            hour: <span class="number">1.</span>,
         };
 
-        <span class="kw">let</span> <span class="ident">design_rate</span> <span class="op">=</span> <span class="number">1.</span>;
-        <span class="kw">let</span> <span class="ident">current_weather</span> <span class="op">=</span> <span class="ident">weather</span>.<span class="ident">get_weather_data</span>(<span class="ident">date</span>);
-        <span class="kw">let</span> <span class="ident">flow</span> <span class="op">=</span> <span class="ident">blast_design_flow_rate</span>(<span class="kw-2">&amp;</span><span class="ident">current_weather</span>, <span class="kw-2">&amp;</span><span class="ident">space</span>, <span class="kw-2">&amp;</span><span class="ident">state</span>, <span class="ident">design_rate</span>);
-        <span class="macro">assert!</span>((<span class="number">1.</span> <span class="op">-</span> <span class="ident">flow</span>).<span class="ident">abs</span>() <span class="op">&lt;</span> <span class="number">0.02</span>);
+        <span class="kw">let </span>design_rate = <span class="number">1.</span>;
+        <span class="kw">let </span>current_weather = weather.get_weather_data(date);
+        <span class="kw">let </span>flow = blast_design_flow_rate(<span class="kw-2">&amp;</span>current_weather, <span class="kw-2">&amp;</span>space, <span class="kw-2">&amp;</span>state, design_rate);
+        <span class="macro">assert!</span>((<span class="number">1. </span>- flow).abs() &lt; <span class="number">0.02</span>);
 
-        <span class="comment">// WINTER</span>
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">weather</span> <span class="op">=</span> <span class="ident">SyntheticWeather::default</span>();
-        <span class="comment">// 40 C of temperature difference</span>
-        <span class="ident">weather</span>.<span class="ident">dry_bulb_temperature</span> <span class="op">=</span> <span class="ident">Box::new</span>(<span class="ident">ScheduleConstant::new</span>(<span class="op">-</span><span class="number">38.</span>));
-        <span class="kw">let</span> <span class="ident">state</span> <span class="op">=</span> <span class="macro">vec!</span>[<span class="number">2.</span>];
-        <span class="comment">//</span>
-        <span class="ident">weather</span>.<span class="ident">wind_speed</span> <span class="op">=</span> <span class="ident">Box::new</span>(<span class="ident">ScheduleConstant::new</span>(<span class="number">6.</span>));
+        <span class="comment">// WINTER
+        </span><span class="kw">let </span><span class="kw-2">mut </span>weather = SyntheticWeather::default();
+        <span class="comment">// 40 C of temperature difference
+        </span>weather.dry_bulb_temperature = Box::new(ScheduleConstant::new(-<span class="number">38.</span>));
+        <span class="kw">let </span>state = <span class="macro">vec!</span>[<span class="number">2.</span>];
+        <span class="comment">//
+        </span>weather.wind_speed = Box::new(ScheduleConstant::new(<span class="number">6.</span>));
 
-        <span class="kw">let</span> <span class="ident">space</span> <span class="op">=</span> <span class="ident">Space::new</span>(<span class="string">&quot;some space&quot;</span>.<span class="ident">to_string</span>());
-        <span class="ident">space</span>.<span class="ident">set_dry_bulb_temperature_index</span>(<span class="number">0</span>);
-        <span class="kw">let</span> <span class="ident">space</span> <span class="op">=</span> <span class="ident">Rc::new</span>(<span class="ident">space</span>);
+        <span class="kw">let </span>space = Space::new(<span class="string">&quot;some space&quot;</span>.to_string());
+        space.set_dry_bulb_temperature_index(<span class="number">0</span>);
+        <span class="kw">let </span>space = Rc::new(space);
 
-        <span class="kw">let</span> <span class="ident">date</span> <span class="op">=</span> <span class="ident">Date</span> {
-            <span class="ident">month</span>: <span class="number">1</span>,
-            <span class="ident">day</span>: <span class="number">1</span>,
-            <span class="ident">hour</span>: <span class="number">1.</span>,
+        <span class="kw">let </span>date = Date {
+            month: <span class="number">1</span>,
+            day: <span class="number">1</span>,
+            hour: <span class="number">1.</span>,
         };
 
-        <span class="kw">let</span> <span class="ident">design_rate</span> <span class="op">=</span> <span class="number">1.</span>;
-        <span class="kw">let</span> <span class="ident">current_weather</span> <span class="op">=</span> <span class="ident">weather</span>.<span class="ident">get_weather_data</span>(<span class="ident">date</span>);
-        <span class="kw">let</span> <span class="ident">flow</span> <span class="op">=</span> <span class="ident">blast_design_flow_rate</span>(<span class="kw-2">&amp;</span><span class="ident">current_weather</span>, <span class="kw-2">&amp;</span><span class="ident">space</span>, <span class="kw-2">&amp;</span><span class="ident">state</span>, <span class="ident">design_rate</span>);
-        <span class="macro">assert!</span>((<span class="number">2.75</span> <span class="op">-</span> <span class="ident">flow</span>).<span class="ident">abs</span>() <span class="op">&lt;</span> <span class="number">0.02</span>);
+        <span class="kw">let </span>design_rate = <span class="number">1.</span>;
+        <span class="kw">let </span>current_weather = weather.get_weather_data(date);
+        <span class="kw">let </span>flow = blast_design_flow_rate(<span class="kw-2">&amp;</span>current_weather, <span class="kw-2">&amp;</span>space, <span class="kw-2">&amp;</span>state, design_rate);
+        <span class="macro">assert!</span>((<span class="number">2.75 </span>- flow).abs() &lt; <span class="number">0.02</span>);
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_design_doe2_flow_rate</span>() {
-        <span class="comment">/* THIS COMES FROM ENERGY PLUS&#39; INPUT OUTPUT REF */</span>
-        <span class="comment">/*
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>test_design_doe2_flow_rate() {
+        <span class="comment">/* THIS COMES FROM ENERGY PLUS&#39; INPUT OUTPUT REF */
+        /*
             &quot;With these coefficients, the summer conditions above would
             give a factor of 0.75, and the winter conditions would give 1.34.
             A windspeed of 4.47 m/s (10 mph) gives a factor of 1.0.
-        */</span>
+        */
 
-        <span class="comment">// Summer</span>
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">weather</span> <span class="op">=</span> <span class="ident">SyntheticWeather::default</span>();
-        <span class="comment">// 0 C of temperature difference</span>
-        <span class="ident">weather</span>.<span class="ident">dry_bulb_temperature</span> <span class="op">=</span> <span class="ident">Box::new</span>(<span class="ident">ScheduleConstant::new</span>(<span class="number">2.</span>));
-        <span class="kw">let</span> <span class="ident">state</span> <span class="op">=</span> <span class="macro">vec!</span>[<span class="number">2.</span>];
-        <span class="comment">//</span>
-        <span class="ident">weather</span>.<span class="ident">wind_speed</span> <span class="op">=</span> <span class="ident">Box::new</span>(<span class="ident">ScheduleConstant::new</span>(<span class="number">3.35</span>));
+        // Summer
+        </span><span class="kw">let </span><span class="kw-2">mut </span>weather = SyntheticWeather::default();
+        <span class="comment">// 0 C of temperature difference
+        </span>weather.dry_bulb_temperature = Box::new(ScheduleConstant::new(<span class="number">2.</span>));
+        <span class="kw">let </span>state = <span class="macro">vec!</span>[<span class="number">2.</span>];
+        <span class="comment">//
+        </span>weather.wind_speed = Box::new(ScheduleConstant::new(<span class="number">3.35</span>));
 
-        <span class="kw">let</span> <span class="ident">space</span> <span class="op">=</span> <span class="ident">Space::new</span>(<span class="string">&quot;some space&quot;</span>.<span class="ident">to_string</span>());
-        <span class="ident">space</span>.<span class="ident">set_dry_bulb_temperature_index</span>(<span class="number">0</span>);
-        <span class="kw">let</span> <span class="ident">space</span> <span class="op">=</span> <span class="ident">Rc::new</span>(<span class="ident">space</span>);
+        <span class="kw">let </span>space = Space::new(<span class="string">&quot;some space&quot;</span>.to_string());
+        space.set_dry_bulb_temperature_index(<span class="number">0</span>);
+        <span class="kw">let </span>space = Rc::new(space);
 
-        <span class="kw">let</span> <span class="ident">date</span> <span class="op">=</span> <span class="ident">Date</span> {
-            <span class="ident">month</span>: <span class="number">1</span>,
-            <span class="ident">day</span>: <span class="number">1</span>,
-            <span class="ident">hour</span>: <span class="number">1.</span>,
+        <span class="kw">let </span>date = Date {
+            month: <span class="number">1</span>,
+            day: <span class="number">1</span>,
+            hour: <span class="number">1.</span>,
         };
 
-        <span class="kw">let</span> <span class="ident">design_rate</span> <span class="op">=</span> <span class="number">1.</span>;
-        <span class="kw">let</span> <span class="ident">current_weather</span> <span class="op">=</span> <span class="ident">weather</span>.<span class="ident">get_weather_data</span>(<span class="ident">date</span>);
-        <span class="kw">let</span> <span class="ident">flow</span> <span class="op">=</span> <span class="ident">doe2_design_flow_rate</span>(<span class="kw-2">&amp;</span><span class="ident">current_weather</span>, <span class="kw-2">&amp;</span><span class="ident">space</span>, <span class="kw-2">&amp;</span><span class="ident">state</span>, <span class="ident">design_rate</span>);
-        <span class="macro">assert!</span>((<span class="number">0.75</span> <span class="op">-</span> <span class="ident">flow</span>).<span class="ident">abs</span>() <span class="op">&lt;</span> <span class="number">0.02</span>);
+        <span class="kw">let </span>design_rate = <span class="number">1.</span>;
+        <span class="kw">let </span>current_weather = weather.get_weather_data(date);
+        <span class="kw">let </span>flow = doe2_design_flow_rate(<span class="kw-2">&amp;</span>current_weather, <span class="kw-2">&amp;</span>space, <span class="kw-2">&amp;</span>state, design_rate);
+        <span class="macro">assert!</span>((<span class="number">0.75 </span>- flow).abs() &lt; <span class="number">0.02</span>);
 
-        <span class="comment">// WINTER</span>
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">weather</span> <span class="op">=</span> <span class="ident">SyntheticWeather::default</span>();
-        <span class="comment">// 40 C of temperature difference</span>
-        <span class="ident">weather</span>.<span class="ident">dry_bulb_temperature</span> <span class="op">=</span> <span class="ident">Box::new</span>(<span class="ident">ScheduleConstant::new</span>(<span class="number">42.</span>));
-        <span class="kw">let</span> <span class="ident">state</span> <span class="op">=</span> <span class="macro">vec!</span>[<span class="number">2.</span>];
-        <span class="comment">//</span>
-        <span class="ident">weather</span>.<span class="ident">wind_speed</span> <span class="op">=</span> <span class="ident">Box::new</span>(<span class="ident">ScheduleConstant::new</span>(<span class="number">6.</span>));
+        <span class="comment">// WINTER
+        </span><span class="kw">let </span><span class="kw-2">mut </span>weather = SyntheticWeather::default();
+        <span class="comment">// 40 C of temperature difference
+        </span>weather.dry_bulb_temperature = Box::new(ScheduleConstant::new(<span class="number">42.</span>));
+        <span class="kw">let </span>state = <span class="macro">vec!</span>[<span class="number">2.</span>];
+        <span class="comment">//
+        </span>weather.wind_speed = Box::new(ScheduleConstant::new(<span class="number">6.</span>));
 
-        <span class="kw">let</span> <span class="ident">space</span> <span class="op">=</span> <span class="ident">Space::new</span>(<span class="string">&quot;some space&quot;</span>.<span class="ident">to_string</span>());
-        <span class="ident">space</span>.<span class="ident">set_dry_bulb_temperature_index</span>(<span class="number">0</span>);
-        <span class="kw">let</span> <span class="ident">space</span> <span class="op">=</span> <span class="ident">Rc::new</span>(<span class="ident">space</span>);
+        <span class="kw">let </span>space = Space::new(<span class="string">&quot;some space&quot;</span>.to_string());
+        space.set_dry_bulb_temperature_index(<span class="number">0</span>);
+        <span class="kw">let </span>space = Rc::new(space);
 
-        <span class="kw">let</span> <span class="ident">date</span> <span class="op">=</span> <span class="ident">Date</span> {
-            <span class="ident">month</span>: <span class="number">1</span>,
-            <span class="ident">day</span>: <span class="number">1</span>,
-            <span class="ident">hour</span>: <span class="number">1.</span>,
+        <span class="kw">let </span>date = Date {
+            month: <span class="number">1</span>,
+            day: <span class="number">1</span>,
+            hour: <span class="number">1.</span>,
         };
 
-        <span class="kw">let</span> <span class="ident">design_rate</span> <span class="op">=</span> <span class="number">1.</span>;
-        <span class="kw">let</span> <span class="ident">current_weather</span> <span class="op">=</span> <span class="ident">weather</span>.<span class="ident">get_weather_data</span>(<span class="ident">date</span>);
-        <span class="kw">let</span> <span class="ident">flow</span> <span class="op">=</span> <span class="ident">doe2_design_flow_rate</span>(<span class="kw-2">&amp;</span><span class="ident">current_weather</span>, <span class="kw-2">&amp;</span><span class="ident">space</span>, <span class="kw-2">&amp;</span><span class="ident">state</span>, <span class="ident">design_rate</span>);
-        <span class="macro">assert!</span>((<span class="number">1.34</span> <span class="op">-</span> <span class="ident">flow</span>).<span class="ident">abs</span>() <span class="op">&lt;</span> <span class="number">0.02</span>);
+        <span class="kw">let </span>design_rate = <span class="number">1.</span>;
+        <span class="kw">let </span>current_weather = weather.get_weather_data(date);
+        <span class="kw">let </span>flow = doe2_design_flow_rate(<span class="kw-2">&amp;</span>current_weather, <span class="kw-2">&amp;</span>space, <span class="kw-2">&amp;</span>state, design_rate);
+        <span class="macro">assert!</span>((<span class="number">1.34 </span>- flow).abs() &lt; <span class="number">0.02</span>);
 
-        <span class="comment">// ... A windspeed of 4.47 m/s (10 mph) gives a factor of 1.0.</span>
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">weather</span> <span class="op">=</span> <span class="ident">SyntheticWeather::default</span>();
-        <span class="comment">// 40 C of temperature difference</span>
-        <span class="ident">weather</span>.<span class="ident">dry_bulb_temperature</span> <span class="op">=</span> <span class="ident">Box::new</span>(<span class="ident">ScheduleConstant::new</span>(<span class="number">42.</span>));
-        <span class="kw">let</span> <span class="ident">state</span> <span class="op">=</span> <span class="macro">vec!</span>[<span class="number">2.</span>];
-        <span class="comment">//</span>
-        <span class="ident">weather</span>.<span class="ident">wind_speed</span> <span class="op">=</span> <span class="ident">Box::new</span>(<span class="ident">ScheduleConstant::new</span>(<span class="number">4.47</span>));
+        <span class="comment">// ... A windspeed of 4.47 m/s (10 mph) gives a factor of 1.0.
+        </span><span class="kw">let </span><span class="kw-2">mut </span>weather = SyntheticWeather::default();
+        <span class="comment">// 40 C of temperature difference
+        </span>weather.dry_bulb_temperature = Box::new(ScheduleConstant::new(<span class="number">42.</span>));
+        <span class="kw">let </span>state = <span class="macro">vec!</span>[<span class="number">2.</span>];
+        <span class="comment">//
+        </span>weather.wind_speed = Box::new(ScheduleConstant::new(<span class="number">4.47</span>));
 
-        <span class="kw">let</span> <span class="ident">space</span> <span class="op">=</span> <span class="ident">Space::new</span>(<span class="string">&quot;some space&quot;</span>.<span class="ident">to_string</span>());
-        <span class="ident">space</span>.<span class="ident">set_dry_bulb_temperature_index</span>(<span class="number">0</span>);
-        <span class="kw">let</span> <span class="ident">space</span> <span class="op">=</span> <span class="ident">Rc::new</span>(<span class="ident">space</span>);
+        <span class="kw">let </span>space = Space::new(<span class="string">&quot;some space&quot;</span>.to_string());
+        space.set_dry_bulb_temperature_index(<span class="number">0</span>);
+        <span class="kw">let </span>space = Rc::new(space);
 
-        <span class="kw">let</span> <span class="ident">date</span> <span class="op">=</span> <span class="ident">Date</span> {
-            <span class="ident">month</span>: <span class="number">1</span>,
-            <span class="ident">day</span>: <span class="number">1</span>,
-            <span class="ident">hour</span>: <span class="number">1.</span>,
+        <span class="kw">let </span>date = Date {
+            month: <span class="number">1</span>,
+            day: <span class="number">1</span>,
+            hour: <span class="number">1.</span>,
         };
 
-        <span class="kw">let</span> <span class="ident">design_rate</span> <span class="op">=</span> <span class="number">1.</span>;
-        <span class="kw">let</span> <span class="ident">current_weather</span> <span class="op">=</span> <span class="ident">weather</span>.<span class="ident">get_weather_data</span>(<span class="ident">date</span>);
-        <span class="kw">let</span> <span class="ident">flow</span> <span class="op">=</span> <span class="ident">doe2_design_flow_rate</span>(<span class="kw-2">&amp;</span><span class="ident">current_weather</span>, <span class="kw-2">&amp;</span><span class="ident">space</span>, <span class="kw-2">&amp;</span><span class="ident">state</span>, <span class="ident">design_rate</span>);
-        <span class="macro">assert!</span>((<span class="number">1.</span> <span class="op">-</span> <span class="ident">flow</span>).<span class="ident">abs</span>() <span class="op">&lt;</span> <span class="number">0.02</span>);
+        <span class="kw">let </span>design_rate = <span class="number">1.</span>;
+        <span class="kw">let </span>current_weather = weather.get_weather_data(date);
+        <span class="kw">let </span>flow = doe2_design_flow_rate(<span class="kw-2">&amp;</span>current_weather, <span class="kw-2">&amp;</span>space, <span class="kw-2">&amp;</span>state, design_rate);
+        <span class="macro">assert!</span>((<span class="number">1. </span>- flow).abs() &lt; <span class="number">0.02</span>);
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="air" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0 (a55dd71d5 2022-09-19)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="air" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0 (897e37553 2022-11-02)" ></div></body></html>
