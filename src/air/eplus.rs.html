@@ -283,8 +283,6 @@
 <span id="249">249</span>
 <span id="250">250</span>
 <span id="251">251</span>
-<span id="252">252</span>
-<span id="253">253</span>
 </pre><pre class="rust"><code><span class="comment">/*
 MIT License
 Copyright (c) 2021 Germán Molina
@@ -315,6 +313,7 @@ SOFTWARE.
 /// EnergyPlus&#39; `ZoneInfiltration:DesignFlowRate`.
 ///
 /// The equation is $`\phi = \phi_{design} (A + B|T_{space} - T_{outside}| + C\times W_{speed} + D\times W^2_{speed})`$
+</span><span class="attribute">#[allow(clippy::too_many_arguments)]
 </span><span class="kw">pub fn </span>design_flow_rate(
     weather: <span class="kw-2">&amp;</span>CurrentWeather,
     space: <span class="kw-2">&amp;</span>Rc&lt;Space&gt;,
@@ -382,10 +381,7 @@ SOFTWARE.
         .dry_bulb_temperature(state)
         .expect(<span class="string">&quot;Space has no Dry-bulb temperature&quot;</span>);
     <span class="kw">let </span>delta_t = (outdoor_temp - space_temp).abs();
-    <span class="kw">let </span>ws = <span class="kw">match </span>weather.wind_speed {
-        <span class="prelude-val">Some</span>(v) =&gt; v,
-        <span class="prelude-val">None </span>=&gt; <span class="number">0.0</span>,
-    };
+    <span class="kw">let </span>ws = weather.wind_speed.unwrap_or(<span class="number">0.0</span>);
 
     (area / <span class="number">1000.</span>) * (cs * delta_t + cw * ws * ws).sqrt()
 }
@@ -421,7 +417,7 @@ SOFTWARE.
         </span>weather.wind_speed = Box::new(ScheduleConstant::new(<span class="number">3.35</span>));
 
         <span class="kw">let </span>space = Space::new(<span class="string">&quot;some space&quot;</span>.to_string());
-        space.set_dry_bulb_temperature_index(<span class="number">0</span>);
+        space.set_dry_bulb_temperature_index(<span class="number">0</span>).unwrap();
         <span class="kw">let </span>space = Rc::new(space);
 
         <span class="kw">let </span>date = Date {
@@ -444,7 +440,7 @@ SOFTWARE.
         </span>weather.wind_speed = Box::new(ScheduleConstant::new(<span class="number">6.</span>));
 
         <span class="kw">let </span>space = Space::new(<span class="string">&quot;some space&quot;</span>.to_string());
-        space.set_dry_bulb_temperature_index(<span class="number">0</span>);
+        space.set_dry_bulb_temperature_index(<span class="number">0</span>).unwrap();
         <span class="kw">let </span>space = Rc::new(space);
 
         <span class="kw">let </span>date = Date {
@@ -477,7 +473,7 @@ SOFTWARE.
         </span>weather.wind_speed = Box::new(ScheduleConstant::new(<span class="number">3.35</span>));
 
         <span class="kw">let </span>space = Space::new(<span class="string">&quot;some space&quot;</span>.to_string());
-        space.set_dry_bulb_temperature_index(<span class="number">0</span>);
+        space.set_dry_bulb_temperature_index(<span class="number">0</span>).unwrap();
         <span class="kw">let </span>space = Rc::new(space);
 
         <span class="kw">let </span>date = Date {
@@ -500,7 +496,7 @@ SOFTWARE.
         </span>weather.wind_speed = Box::new(ScheduleConstant::new(<span class="number">6.</span>));
 
         <span class="kw">let </span>space = Space::new(<span class="string">&quot;some space&quot;</span>.to_string());
-        space.set_dry_bulb_temperature_index(<span class="number">0</span>);
+        space.set_dry_bulb_temperature_index(<span class="number">0</span>).unwrap();
         <span class="kw">let </span>space = Rc::new(space);
 
         <span class="kw">let </span>date = Date {
@@ -523,7 +519,7 @@ SOFTWARE.
         </span>weather.wind_speed = Box::new(ScheduleConstant::new(<span class="number">4.47</span>));
 
         <span class="kw">let </span>space = Space::new(<span class="string">&quot;some space&quot;</span>.to_string());
-        space.set_dry_bulb_temperature_index(<span class="number">0</span>);
+        space.set_dry_bulb_temperature_index(<span class="number">0</span>).unwrap();
         <span class="kw">let </span>space = Rc::new(space);
 
         <span class="kw">let </span>date = Date {

@@ -224,6 +224,8 @@
 <span id="190">190</span>
 <span id="191">191</span>
 <span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
 </pre><pre class="rust"><code><span class="comment">/*
 MIT License
 Copyright (c) 2021 Germán Molina
@@ -245,14 +247,14 @@ SOFTWARE.
 */
 
 // use crate::Float;
-</span><span class="kw">use </span>calendar::Date;
+</span><span class="kw">use </span><span class="kw">crate</span>::resolvers::<span class="kw-2">*</span>;
+<span class="kw">use </span>calendar::Date;
 <span class="kw">use </span>communication_protocols::{ErrorHandling, MetaOptions, SimulationModel};
 <span class="kw">use </span>simple_model::{
     Infiltration, SimpleModel, SimulationState, SimulationStateElement, SimulationStateHeader,
 };
-<span class="kw">use </span>weather::{CurrentWeather, Weather};
 <span class="kw">use </span>std::borrow::Borrow;
-<span class="kw">use </span><span class="kw">crate</span>::resolvers::<span class="kw-2">*</span>;
+<span class="kw">use </span>weather::{CurrentWeather, Weather};
 
 <span class="kw">pub type </span>Resolver = Box&lt;<span class="kw">dyn </span>Fn(<span class="kw-2">&amp;</span>CurrentWeather, <span class="kw-2">&amp;mut </span>SimulationState)&gt;;
 
@@ -287,13 +289,13 @@ SOFTWARE.
             <span class="kw">let </span>inf_vol_index = state.push(
                 SimulationStateElement::SpaceInfiltrationVolume(i),
                 initial_vol,
-            );
-            space.set_infiltration_volume_index(inf_vol_index);
+            )<span class="question-mark">?</span>;
+            space.set_infiltration_volume_index(inf_vol_index)<span class="question-mark">?</span>;
             <span class="kw">let </span>inf_temp_index = state.push(
                 SimulationStateElement::SpaceInfiltrationTemperature(i),
                 initial_temp,
-            );
-            space.set_infiltration_temperature_index(inf_temp_index);
+            )<span class="question-mark">?</span>;
+            space.set_infiltration_temperature_index(inf_temp_index)<span class="question-mark">?</span>;
 
             <span class="comment">// Pre-process infiltration calculations
             </span><span class="kw">if let </span><span class="prelude-val">Ok</span>(infiltration) = space.infiltration() {
@@ -361,8 +363,10 @@ SOFTWARE.
 
         <span class="kw">let </span><span class="kw-2">mut </span>space = Space::new(<span class="string">&quot;some space&quot;</span>.to_string());
         space.set_infiltration(Infiltration::Doe2 { flow: <span class="number">1. </span>});
-        <span class="kw">let </span>i = state_header.push(SimulationStateElement::SpaceDryBulbTemperature(<span class="number">0</span>), <span class="number">22.</span>);
-        space.set_dry_bulb_temperature_index(i);
+        <span class="kw">let </span>i = state_header
+            .push(SimulationStateElement::SpaceDryBulbTemperature(<span class="number">0</span>), <span class="number">22.</span>)
+            .unwrap();
+        space.set_dry_bulb_temperature_index(i).unwrap();
         <span class="kw">let </span>space = simple_model.add_space(space);
 
         <span class="kw">let </span>model = AirFlowModel::new(<span class="kw-2">&amp;</span>META_OPTIONS, (), <span class="kw-2">&amp;</span>simple_model, <span class="kw-2">&amp;mut </span>state_header, <span class="number">1</span>)
