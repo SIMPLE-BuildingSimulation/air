@@ -134,7 +134,7 @@ mod tests {
         weather.wind_speed = Box::new(ScheduleConstant::new(3.35));
 
         let space = Space::new("some space".to_string());
-        space.set_dry_bulb_temperature_index(0);
+        space.set_dry_bulb_temperature_index(0).unwrap();
         let space = Rc::new(space);
 
         let date = Date {
@@ -157,7 +157,7 @@ mod tests {
         weather.wind_speed = Box::new(ScheduleConstant::new(6.));
 
         let space = Space::new("some space".to_string());
-        space.set_dry_bulb_temperature_index(0);
+        space.set_dry_bulb_temperature_index(0).unwrap();
         let space = Rc::new(space);
 
         let date = Date {
@@ -190,7 +190,7 @@ mod tests {
         weather.wind_speed = Box::new(ScheduleConstant::new(3.35));
 
         let space = Space::new("some space".to_string());
-        space.set_dry_bulb_temperature_index(0);
+        space.set_dry_bulb_temperature_index(0).unwrap();
         let space = Rc::new(space);
 
         let date = Date {
@@ -213,7 +213,7 @@ mod tests {
         weather.wind_speed = Box::new(ScheduleConstant::new(6.));
 
         let space = Space::new("some space".to_string());
-        space.set_dry_bulb_temperature_index(0);
+        space.set_dry_bulb_temperature_index(0).unwrap();
         let space = Rc::new(space);
 
         let date = Date {
@@ -236,7 +236,7 @@ mod tests {
         weather.wind_speed = Box::new(ScheduleConstant::new(4.47));
 
         let space = Space::new("some space".to_string());
-        space.set_dry_bulb_temperature_index(0);
+        space.set_dry_bulb_temperature_index(0).unwrap();
         let space = Rc::new(space);
 
         let date = Date {

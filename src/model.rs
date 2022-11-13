@@ -61,13 +61,13 @@ impl SimulationModel for AirFlowModel {
             let inf_vol_index = state.push(
                 SimulationStateElement::SpaceInfiltrationVolume(i),
                 initial_vol,
-            );
-            space.set_infiltration_volume_index(inf_vol_index);
+            )?;
+            space.set_infiltration_volume_index(inf_vol_index)?;
             let inf_temp_index = state.push(
                 SimulationStateElement::SpaceInfiltrationTemperature(i),
                 initial_temp,
-            );
-            space.set_infiltration_temperature_index(inf_temp_index);
+            )?;
+            space.set_infiltration_temperature_index(inf_temp_index)?;
 
             // Pre-process infiltration calculations
             if let Ok(infiltration) = space.infiltration() {
@@ -135,8 +135,8 @@ mod tests {
 
         let mut space = Space::new("some space".to_string());
         space.set_infiltration(Infiltration::Doe2 { flow: 1. });
-        let i = state_header.push(SimulationStateElement::SpaceDryBulbTemperature(0), 22.);
-        space.set_dry_bulb_temperature_index(i);
+        let i = state_header.push(SimulationStateElement::SpaceDryBulbTemperature(0), 22.).unwrap();
+        space.set_dry_bulb_temperature_index(i).unwrap();
         let space = simple_model.add_space(space);
 
         let model = AirFlowModel::new(&META_OPTIONS, (), &simple_model, &mut state_header, 1)
