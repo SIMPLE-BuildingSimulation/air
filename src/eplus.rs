@@ -28,6 +28,7 @@ use weather::CurrentWeather;
 /// EnergyPlus' `ZoneInfiltration:DesignFlowRate`.
 ///
 /// The equation is $`\phi = \phi_{design} (A + B|T_{space} - T_{outside}| + C\times W_{speed} + D\times W^2_{speed})`$
+#[allow(clippy::too_many_arguments)]
 pub fn design_flow_rate(
     weather: &CurrentWeather,
     space: &Rc<Space>,
@@ -95,10 +96,7 @@ pub fn effective_leakage_area(
         .dry_bulb_temperature(state)
         .expect("Space has no Dry-bulb temperature");
     let delta_t = (outdoor_temp - space_temp).abs();
-    let ws = match weather.wind_speed {
-        Some(v) => v,
-        None => 0.0,
-    };
+    let ws = weather.wind_speed.unwrap_or(0.0);
 
     (area / 1000.) * (cs * delta_t + cw * ws * ws).sqrt()
 }

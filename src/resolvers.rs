@@ -15,7 +15,9 @@ pub fn constant_resolver(space: &Rc<Space>, v: Float) -> Result<Resolver, String
             let outdoor_temperature = current_weather
                 .dry_bulb_temperature
                 .expect("Weather does not have dry bulb temperature");
-            space_clone.set_infiltration_temperature(state, outdoor_temperature).unwrap();
+            space_clone
+                .set_infiltration_temperature(state, outdoor_temperature)
+                .unwrap();
 
             // Set volume
             space_clone.set_infiltration_volume(state, v).unwrap();
@@ -31,10 +33,12 @@ pub fn blast_resolver(space: &Rc<Space>, v: Float) -> Result<Resolver, String> {
             let outdoor_temperature = current_weather
                 .dry_bulb_temperature
                 .expect("Weather does not have dry bulb temperature");
-            space_clone.set_infiltration_temperature(state, outdoor_temperature).unwrap();
+            space_clone
+                .set_infiltration_temperature(state, outdoor_temperature)
+                .unwrap();
 
             // Set volume
-            let volume = blast_design_flow_rate(&current_weather, &space_clone, state, v);
+            let volume = blast_design_flow_rate(current_weather, &space_clone, state, v);
             space_clone.set_infiltration_volume(state, volume).unwrap();
         },
     ))
@@ -48,10 +52,12 @@ pub fn doe2_resolver(space: &Rc<Space>, v: Float) -> Result<Resolver, String> {
             let outdoor_temperature = current_weather
                 .dry_bulb_temperature
                 .expect("Weather does not have dry bulb temperature");
-            space_clone.set_infiltration_temperature(state, outdoor_temperature).unwrap();
+            space_clone
+                .set_infiltration_temperature(state, outdoor_temperature)
+                .unwrap();
 
             // Set volume
-            let volume = doe2_design_flow_rate(&current_weather, &space_clone, state, v);
+            let volume = doe2_design_flow_rate(current_weather, &space_clone, state, v);
             space_clone.set_infiltration_volume(state, volume).unwrap();
         },
     ))
@@ -72,10 +78,12 @@ pub fn design_flow_rate_resolver(
             let outdoor_temperature = current_weather
                 .dry_bulb_temperature
                 .expect("Weather does not have dry bulb temperature");
-            space_clone.set_infiltration_temperature(state, outdoor_temperature).unwrap();
+            space_clone
+                .set_infiltration_temperature(state, outdoor_temperature)
+                .unwrap();
 
             // Set volume
-            let volume = design_flow_rate(&current_weather, &space_clone, state, a, b, c, d, v);
+            let volume = design_flow_rate(current_weather, &space_clone, state, a, b, c, d, v);
             space_clone.set_infiltration_volume(state, volume).unwrap();
         },
     ))
@@ -191,15 +199,17 @@ pub fn effective_air_leakage_resolver(
                 let outdoor_temperature = current_weather
                     .dry_bulb_temperature
                     .expect("Weather does not have dry bulb temperature");
-                space_clone.set_infiltration_temperature(state, outdoor_temperature).unwrap();
+                space_clone
+                    .set_infiltration_temperature(state, outdoor_temperature)
+                    .unwrap();
 
                 // Set volume
                 let volume =
-                    effective_leakage_area(&current_weather, &space_clone, state, al, cw, cs);
+                    effective_leakage_area(current_weather, &space_clone, state, al, cw, cs);
                 space_clone.set_infiltration_volume(state, volume).unwrap();
             },
         ))
     } else {
-        return Err(format!("Space '{}' has been assigned an Infiltration::EffectiveAirLeakageArea but no building... Assign a Building to it.", space.name));
+        Err(format!("Space '{}' has been assigned an Infiltration::EffectiveAirLeakageArea but no building... Assign a Building to it.", space.name))
     }
 }

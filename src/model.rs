@@ -19,14 +19,14 @@ SOFTWARE.
 */
 
 // use crate::Float;
+use crate::resolvers::*;
 use calendar::Date;
 use communication_protocols::{ErrorHandling, MetaOptions, SimulationModel};
 use simple_model::{
     Infiltration, SimpleModel, SimulationState, SimulationStateElement, SimulationStateHeader,
 };
-use weather::{CurrentWeather, Weather};
 use std::borrow::Borrow;
-use crate::resolvers::*;
+use weather::{CurrentWeather, Weather};
 
 pub type Resolver = Box<dyn Fn(&CurrentWeather, &mut SimulationState)>;
 
@@ -135,7 +135,9 @@ mod tests {
 
         let mut space = Space::new("some space".to_string());
         space.set_infiltration(Infiltration::Doe2 { flow: 1. });
-        let i = state_header.push(SimulationStateElement::SpaceDryBulbTemperature(0), 22.).unwrap();
+        let i = state_header
+            .push(SimulationStateElement::SpaceDryBulbTemperature(0), 22.)
+            .unwrap();
         space.set_dry_bulb_temperature_index(i).unwrap();
         let space = simple_model.add_space(space);
 
