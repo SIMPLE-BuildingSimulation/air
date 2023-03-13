@@ -40,9 +40,18 @@ impl ErrorHandling for AirFlowModel {
     }
 }
 
+/// The memory needed to run this simulation
+pub type AirFlowModelMemory = ();
+
 impl SimulationModel for AirFlowModel {
-    type Type = Self;
+    type OutputType = Self;
     type OptionType = ();
+    type AllocType = AirFlowModelMemory;
+
+    fn allocate_memory(&self)->Result<Self::AllocType, String>{
+        Ok(())
+    }
+    
 
     /// Creates a new AirFlowModel from a SimpleModel.    
     fn new<M: Borrow<SimpleModel>>(
@@ -103,6 +112,7 @@ impl SimulationModel for AirFlowModel {
         weather: &W,
         _model: M,
         state: &mut SimulationState,
+        _alloc: &mut AirFlowModelMemory,
     ) -> Result<(), String> {
         // Process infiltration
         let current_weather = weather.get_weather_data(date);
@@ -172,7 +182,7 @@ mod tests {
         assert!(inf < 1e-9);
 
         model
-            .march(date, &weather, &simple_model, &mut state)
+            .march(date, &weather, &simple_model, &mut state, &mut ())
             .unwrap();
 
         // Check values.
@@ -184,7 +194,7 @@ mod tests {
         weather.dry_bulb_temperature = Box::new(ScheduleConstant::new(space_temp - 40.));
         weather.wind_speed = Box::new(ScheduleConstant::new(4.47));
         model
-            .march(date, &weather, &simple_model, &mut state)
+            .march(date, &weather, &simple_model, &mut state, &mut ())
             .unwrap();
 
         // Check values.

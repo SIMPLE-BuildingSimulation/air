@@ -7,7 +7,8 @@ edition = "2018"
 
 [dependencies]
 simple_model = { git = "https://github.com/SIMPLE-BuildingSimulation/simple_model.git" }
-communication_protocols = { git = "https://github.com/SIMPLE-BuildingSimulation/communication_protocols.git" }
+# communication_protocols = { git = "https://github.com/SIMPLE-BuildingSimulation/communication_protocols.git" }
+communication_protocols = { path = "../communication_protocols" }
 weather = { git = "https://github.com/SIMPLE-BuildingSimulation/weather.git" }
 calendar = { git = "https://github.com/SIMPLE-BuildingSimulation/calendar.git" }
 
