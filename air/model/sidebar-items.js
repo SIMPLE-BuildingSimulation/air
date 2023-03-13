@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["AirFlowModel",""]],"type":[["Resolver",""]]};
+window.SIDEBAR_ITEMS = {"struct":[["AirFlowModel",""]],"type":[["AirFlowModelMemory","The memory needed to run this simulation"],["Resolver",""]]};
