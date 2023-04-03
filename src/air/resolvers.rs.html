@@ -249,15 +249,15 @@
 <a href="#215" id="215">215</a>
 </pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::model::Resolver;
 <span class="kw">use </span><span class="kw">crate</span>::Float;
-<span class="kw">use </span>std::rc::Rc;
+<span class="kw">use </span>std::sync::Arc;
 
 <span class="kw">use </span>simple_model::{Building, ShelterClass, SimpleModel, SimulationState, Space};
 
 <span class="kw">use </span><span class="kw">crate</span>::eplus::<span class="kw-2">*</span>;
 <span class="kw">use </span>weather::CurrentWeather;
 
-<span class="kw">pub fn </span>constant_resolver(space: <span class="kw-2">&amp;</span>Rc&lt;Space&gt;, v: Float) -&gt; <span class="prelude-ty">Result</span>&lt;Resolver, String&gt; {
-    <span class="kw">let </span>space_clone = Rc::clone(space);
+<span class="kw">pub fn </span>constant_resolver(space: <span class="kw-2">&amp;</span>Arc&lt;Space&gt;, v: Float) -&gt; <span class="prelude-ty">Result</span>&lt;Resolver, String&gt; {
+    <span class="kw">let </span>space_clone = Arc::clone(space);
     <span class="prelude-val">Ok</span>(Box::new(
         <span class="kw">move </span>|current_weather: <span class="kw-2">&amp;</span>CurrentWeather, state: <span class="kw-2">&amp;mut </span>SimulationState| {
             <span class="comment">// Set temperature
@@ -274,8 +274,8 @@
     ))
 }
 
-<span class="kw">pub fn </span>blast_resolver(space: <span class="kw-2">&amp;</span>Rc&lt;Space&gt;, v: Float) -&gt; <span class="prelude-ty">Result</span>&lt;Resolver, String&gt; {
-    <span class="kw">let </span>space_clone = Rc::clone(space);
+<span class="kw">pub fn </span>blast_resolver(space: <span class="kw-2">&amp;</span>Arc&lt;Space&gt;, v: Float) -&gt; <span class="prelude-ty">Result</span>&lt;Resolver, String&gt; {
+    <span class="kw">let </span>space_clone = Arc::clone(space);
     <span class="prelude-val">Ok</span>(Box::new(
         <span class="kw">move </span>|current_weather: <span class="kw-2">&amp;</span>CurrentWeather, state: <span class="kw-2">&amp;mut </span>SimulationState| {
             <span class="comment">// Set temperature
@@ -293,8 +293,8 @@
     ))
 }
 
-<span class="kw">pub fn </span>doe2_resolver(space: <span class="kw-2">&amp;</span>Rc&lt;Space&gt;, v: Float) -&gt; <span class="prelude-ty">Result</span>&lt;Resolver, String&gt; {
-    <span class="kw">let </span>space_clone = Rc::clone(space);
+<span class="kw">pub fn </span>doe2_resolver(space: <span class="kw-2">&amp;</span>Arc&lt;Space&gt;, v: Float) -&gt; <span class="prelude-ty">Result</span>&lt;Resolver, String&gt; {
+    <span class="kw">let </span>space_clone = Arc::clone(space);
     <span class="prelude-val">Ok</span>(Box::new(
         <span class="kw">move </span>|current_weather: <span class="kw-2">&amp;</span>CurrentWeather, state: <span class="kw-2">&amp;mut </span>SimulationState| {
             <span class="comment">// Set temperature
@@ -313,14 +313,14 @@
 }
 
 <span class="kw">pub fn </span>design_flow_rate_resolver(
-    space: <span class="kw-2">&amp;</span>Rc&lt;Space&gt;,
+    space: <span class="kw-2">&amp;</span>Arc&lt;Space&gt;,
     a: Float,
     b: Float,
     c: Float,
     d: Float,
     v: Float,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;Resolver, String&gt; {
-    <span class="kw">let </span>space_clone = Rc::clone(space);
+    <span class="kw">let </span>space_clone = Arc::clone(space);
     <span class="prelude-val">Ok</span>(Box::new(
         <span class="kw">move </span>|current_weather: <span class="kw-2">&amp;</span>CurrentWeather, state: <span class="kw-2">&amp;mut </span>SimulationState| {
             <span class="comment">// Set temperature
@@ -338,7 +338,7 @@
     ))
 }
 
-<span class="kw">fn </span>resolve_stack_coefficient(space: <span class="kw-2">&amp;</span>Rc&lt;Space&gt;, building: <span class="kw-2">&amp;</span>Rc&lt;Building&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;Float, String&gt; {
+<span class="kw">fn </span>resolve_stack_coefficient(space: <span class="kw-2">&amp;</span>Arc&lt;Space&gt;, building: <span class="kw-2">&amp;</span>Arc&lt;Building&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;Float, String&gt; {
     <span class="kw">let </span>cs = <span class="kw">match </span>building.stack_coefficient() {
         <span class="prelude-val">Ok</span>(v)=&gt;<span class="kw-2">*</span>v,
         <span class="prelude-val">Err</span>(<span class="kw">_</span>)=&gt;{
@@ -365,7 +365,7 @@
     <span class="prelude-val">Ok</span>(cs)
 }
 
-<span class="kw">fn </span>resolve_wind_coefficient(space: <span class="kw-2">&amp;</span>Rc&lt;Space&gt;, building: <span class="kw-2">&amp;</span>Rc&lt;Building&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;Float, String&gt; {
+<span class="kw">fn </span>resolve_wind_coefficient(space: <span class="kw-2">&amp;</span>Arc&lt;Space&gt;, building: <span class="kw-2">&amp;</span>Arc&lt;Building&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;Float, String&gt; {
     <span class="kw">let </span>cw = <span class="kw">match </span>building.wind_coefficient() {
         <span class="prelude-val">Ok</span>(v) =&gt; <span class="kw-2">*</span>v,
         <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; {
@@ -431,7 +431,7 @@
 }
 
 <span class="kw">pub fn </span>effective_air_leakage_resolver(
-    space: <span class="kw-2">&amp;</span>Rc&lt;Space&gt;,
+    space: <span class="kw-2">&amp;</span>Arc&lt;Space&gt;,
     model: <span class="kw-2">&amp;</span>SimpleModel,
     al: Float,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;Resolver, String&gt; {
@@ -441,7 +441,7 @@
         <span class="kw">let </span>cs = resolve_stack_coefficient(space, <span class="kw-2">&amp;</span>building)<span class="question-mark">?</span>;
         <span class="kw">let </span>cw = resolve_wind_coefficient(space, <span class="kw-2">&amp;</span>building)<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>space_clone = Rc::clone(space);
+        <span class="kw">let </span>space_clone = Arc::clone(space);
         <span class="prelude-val">Ok</span>(Box::new(
             <span class="kw">move </span>|current_weather: <span class="kw-2">&amp;</span>CurrentWeather, state: <span class="kw-2">&amp;mut </span>SimulationState| {
                 <span class="comment">// Set temperature

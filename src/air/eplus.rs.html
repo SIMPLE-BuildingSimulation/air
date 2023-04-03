@@ -303,7 +303,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-</span><span class="kw">use </span>std::rc::Rc;
+</span><span class="kw">use </span>std::sync::Arc;
 
 <span class="kw">use </span><span class="kw">crate</span>::Float;
 <span class="kw">use </span>simple_model::{SimulationState, Space};
@@ -316,7 +316,7 @@ SOFTWARE.
 </span><span class="attr">#[allow(clippy::too_many_arguments)]
 </span><span class="kw">pub fn </span>design_flow_rate(
     weather: <span class="kw-2">&amp;</span>CurrentWeather,
-    space: <span class="kw-2">&amp;</span>Rc&lt;Space&gt;,
+    space: <span class="kw-2">&amp;</span>Arc&lt;Space&gt;,
     state: <span class="kw-2">&amp;</span>SimulationState,
     design_rate: Float,
     a: Float,
@@ -340,7 +340,7 @@ SOFTWARE.
 <span class="doccomment">/// Calculates the design flow rates using the BLAST defaults (reported in EnergyPlus&#39; Input/Output reference)
 </span><span class="kw">pub fn </span>blast_design_flow_rate(
     weather: <span class="kw-2">&amp;</span>CurrentWeather,
-    space: <span class="kw-2">&amp;</span>Rc&lt;Space&gt;,
+    space: <span class="kw-2">&amp;</span>Arc&lt;Space&gt;,
     state: <span class="kw-2">&amp;</span>SimulationState,
     design_rate: Float,
 ) -&gt; Float {
@@ -359,7 +359,7 @@ SOFTWARE.
 <span class="doccomment">/// Calculates the design flow rates using the DOE-2 defaults (reported in EnergyPlus&#39; Input/Output reference)
 </span><span class="kw">pub fn </span>doe2_design_flow_rate(
     weather: <span class="kw-2">&amp;</span>CurrentWeather,
-    space: <span class="kw-2">&amp;</span>Rc&lt;Space&gt;,
+    space: <span class="kw-2">&amp;</span>Arc&lt;Space&gt;,
     state: <span class="kw-2">&amp;</span>SimulationState,
     design_rate: Float,
 ) -&gt; Float {
@@ -368,7 +368,7 @@ SOFTWARE.
 
 <span class="kw">pub fn </span>effective_leakage_area(
     weather: <span class="kw-2">&amp;</span>CurrentWeather,
-    space: <span class="kw-2">&amp;</span>Rc&lt;Space&gt;,
+    space: <span class="kw-2">&amp;</span>Arc&lt;Space&gt;,
     state: <span class="kw-2">&amp;</span>SimulationState,
     area: Float,
     cw: Float,
@@ -418,7 +418,7 @@ SOFTWARE.
 
         <span class="kw">let </span>space = Space::new(<span class="string">&quot;some space&quot;</span>.to_string());
         space.set_dry_bulb_temperature_index(<span class="number">0</span>).unwrap();
-        <span class="kw">let </span>space = Rc::new(space);
+        <span class="kw">let </span>space = Arc::new(space);
 
         <span class="kw">let </span>date = Date {
             month: <span class="number">1</span>,
@@ -441,7 +441,7 @@ SOFTWARE.
 
         <span class="kw">let </span>space = Space::new(<span class="string">&quot;some space&quot;</span>.to_string());
         space.set_dry_bulb_temperature_index(<span class="number">0</span>).unwrap();
-        <span class="kw">let </span>space = Rc::new(space);
+        <span class="kw">let </span>space = Arc::new(space);
 
         <span class="kw">let </span>date = Date {
             month: <span class="number">1</span>,
@@ -474,7 +474,7 @@ SOFTWARE.
 
         <span class="kw">let </span>space = Space::new(<span class="string">&quot;some space&quot;</span>.to_string());
         space.set_dry_bulb_temperature_index(<span class="number">0</span>).unwrap();
-        <span class="kw">let </span>space = Rc::new(space);
+        <span class="kw">let </span>space = Arc::new(space);
 
         <span class="kw">let </span>date = Date {
             month: <span class="number">1</span>,
@@ -497,7 +497,7 @@ SOFTWARE.
 
         <span class="kw">let </span>space = Space::new(<span class="string">&quot;some space&quot;</span>.to_string());
         space.set_dry_bulb_temperature_index(<span class="number">0</span>).unwrap();
-        <span class="kw">let </span>space = Rc::new(space);
+        <span class="kw">let </span>space = Arc::new(space);
 
         <span class="kw">let </span>date = Date {
             month: <span class="number">1</span>,
@@ -520,7 +520,7 @@ SOFTWARE.
 
         <span class="kw">let </span>space = Space::new(<span class="string">&quot;some space&quot;</span>.to_string());
         space.set_dry_bulb_temperature_index(<span class="number">0</span>).unwrap();
-        <span class="kw">let </span>space = Rc::new(space);
+        <span class="kw">let </span>space = Arc::new(space);
 
         <span class="kw">let </span>date = Date {
             month: <span class="number">1</span>,
