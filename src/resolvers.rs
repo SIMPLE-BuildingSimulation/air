@@ -1,14 +1,14 @@
 use crate::model::Resolver;
 use crate::Float;
-use std::rc::Rc;
+use std::sync::Arc;
 
 use simple_model::{Building, ShelterClass, SimpleModel, SimulationState, Space};
 
 use crate::eplus::*;
 use weather::CurrentWeather;
 
-pub fn constant_resolver(space: &Rc<Space>, v: Float) -> Result<Resolver, String> {
-    let space_clone = Rc::clone(space);
+pub fn constant_resolver(space: &Arc<Space>, v: Float) -> Result<Resolver, String> {
+    let space_clone = Arc::clone(space);
     Ok(Box::new(
         move |current_weather: &CurrentWeather, state: &mut SimulationState| {
             // Set temperature
@@ -25,8 +25,8 @@ pub fn constant_resolver(space: &Rc<Space>, v: Float) -> Result<Resolver, String
     ))
 }
 
-pub fn blast_resolver(space: &Rc<Space>, v: Float) -> Result<Resolver, String> {
-    let space_clone = Rc::clone(space);
+pub fn blast_resolver(space: &Arc<Space>, v: Float) -> Result<Resolver, String> {
+    let space_clone = Arc::clone(space);
     Ok(Box::new(
         move |current_weather: &CurrentWeather, state: &mut SimulationState| {
             // Set temperature
@@ -44,8 +44,8 @@ pub fn blast_resolver(space: &Rc<Space>, v: Float) -> Result<Resolver, String> {
     ))
 }
 
-pub fn doe2_resolver(space: &Rc<Space>, v: Float) -> Result<Resolver, String> {
-    let space_clone = Rc::clone(space);
+pub fn doe2_resolver(space: &Arc<Space>, v: Float) -> Result<Resolver, String> {
+    let space_clone = Arc::clone(space);
     Ok(Box::new(
         move |current_weather: &CurrentWeather, state: &mut SimulationState| {
             // Set temperature
@@ -64,14 +64,14 @@ pub fn doe2_resolver(space: &Rc<Space>, v: Float) -> Result<Resolver, String> {
 }
 
 pub fn design_flow_rate_resolver(
-    space: &Rc<Space>,
+    space: &Arc<Space>,
     a: Float,
     b: Float,
     c: Float,
     d: Float,
     v: Float,
 ) -> Result<Resolver, String> {
-    let space_clone = Rc::clone(space);
+    let space_clone = Arc::clone(space);
     Ok(Box::new(
         move |current_weather: &CurrentWeather, state: &mut SimulationState| {
             // Set temperature
@@ -89,7 +89,7 @@ pub fn design_flow_rate_resolver(
     ))
 }
 
-fn resolve_stack_coefficient(space: &Rc<Space>, building: &Rc<Building>) -> Result<Float, String> {
+fn resolve_stack_coefficient(space: &Arc<Space>, building: &Arc<Building>) -> Result<Float, String> {
     let cs = match building.stack_coefficient() {
         Ok(v)=>*v,
         Err(_)=>{
@@ -116,7 +116,7 @@ fn resolve_stack_coefficient(space: &Rc<Space>, building: &Rc<Building>) -> Resu
     Ok(cs)
 }
 
-fn resolve_wind_coefficient(space: &Rc<Space>, building: &Rc<Building>) -> Result<Float, String> {
+fn resolve_wind_coefficient(space: &Arc<Space>, building: &Arc<Building>) -> Result<Float, String> {
     let cw = match building.wind_coefficient() {
         Ok(v) => *v,
         Err(_) => {
@@ -182,7 +182,7 @@ fn resolve_wind_coefficient(space: &Rc<Space>, building: &Rc<Building>) -> Resul
 }
 
 pub fn effective_air_leakage_resolver(
-    space: &Rc<Space>,
+    space: &Arc<Space>,
     model: &SimpleModel,
     al: Float,
 ) -> Result<Resolver, String> {
@@ -192,7 +192,7 @@ pub fn effective_air_leakage_resolver(
         let cs = resolve_stack_coefficient(space, &building)?;
         let cw = resolve_wind_coefficient(space, &building)?;
 
-        let space_clone = Rc::clone(space);
+        let space_clone = Arc::clone(space);
         Ok(Box::new(
             move |current_weather: &CurrentWeather, state: &mut SimulationState| {
                 // Set temperature

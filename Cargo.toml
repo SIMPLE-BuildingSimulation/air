@@ -7,6 +7,7 @@ edition = "2018"
 
 [dependencies]
 simple_model = { git = "https://github.com/SIMPLE-BuildingSimulation/simple_model.git" }
+# simple_model = { path = "../simple_model" }
 communication_protocols = { git = "https://github.com/SIMPLE-BuildingSimulation/communication_protocols.git" }
 # communication_protocols = { path = "../communication_protocols" }
 weather = { git = "https://github.com/SIMPLE-BuildingSimulation/weather.git" }
@@ -17,5 +18,9 @@ schedule = { git = "https://github.com/SIMPLE-BuildingSimulation/schedule.git" }
 
 [features]
 default = []
-float = ["communication_protocols/float","simple_model/float", "weather/float", "calendar/float"]
-
+float = [
+    "communication_protocols/float",
+    "simple_model/float",
+    "weather/float",
+    "calendar/float",
+]

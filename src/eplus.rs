@@ -18,7 +18,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-use std::rc::Rc;
+use std::sync::Arc;
 
 use crate::Float;
 use simple_model::{SimulationState, Space};
@@ -31,7 +31,7 @@ use weather::CurrentWeather;
 #[allow(clippy::too_many_arguments)]
 pub fn design_flow_rate(
     weather: &CurrentWeather,
-    space: &Rc<Space>,
+    space: &Arc<Space>,
     state: &SimulationState,
     design_rate: Float,
     a: Float,
@@ -55,7 +55,7 @@ pub fn design_flow_rate(
 /// Calculates the design flow rates using the BLAST defaults (reported in EnergyPlus' Input/Output reference)
 pub fn blast_design_flow_rate(
     weather: &CurrentWeather,
-    space: &Rc<Space>,
+    space: &Arc<Space>,
     state: &SimulationState,
     design_rate: Float,
 ) -> Float {
@@ -74,7 +74,7 @@ pub fn blast_design_flow_rate(
 /// Calculates the design flow rates using the DOE-2 defaults (reported in EnergyPlus' Input/Output reference)
 pub fn doe2_design_flow_rate(
     weather: &CurrentWeather,
-    space: &Rc<Space>,
+    space: &Arc<Space>,
     state: &SimulationState,
     design_rate: Float,
 ) -> Float {
@@ -83,7 +83,7 @@ pub fn doe2_design_flow_rate(
 
 pub fn effective_leakage_area(
     weather: &CurrentWeather,
-    space: &Rc<Space>,
+    space: &Arc<Space>,
     state: &SimulationState,
     area: Float,
     cw: Float,
@@ -133,7 +133,7 @@ mod tests {
 
         let space = Space::new("some space".to_string());
         space.set_dry_bulb_temperature_index(0).unwrap();
-        let space = Rc::new(space);
+        let space = Arc::new(space);
 
         let date = Date {
             month: 1,
@@ -156,7 +156,7 @@ mod tests {
 
         let space = Space::new("some space".to_string());
         space.set_dry_bulb_temperature_index(0).unwrap();
-        let space = Rc::new(space);
+        let space = Arc::new(space);
 
         let date = Date {
             month: 1,
@@ -189,7 +189,7 @@ mod tests {
 
         let space = Space::new("some space".to_string());
         space.set_dry_bulb_temperature_index(0).unwrap();
-        let space = Rc::new(space);
+        let space = Arc::new(space);
 
         let date = Date {
             month: 1,
@@ -212,7 +212,7 @@ mod tests {
 
         let space = Space::new("some space".to_string());
         space.set_dry_bulb_temperature_index(0).unwrap();
-        let space = Rc::new(space);
+        let space = Arc::new(space);
 
         let date = Date {
             month: 1,
@@ -235,7 +235,7 @@ mod tests {
 
         let space = Space::new("some space".to_string());
         space.set_dry_bulb_temperature_index(0).unwrap();
-        let space = Rc::new(space);
+        let space = Arc::new(space);
 
         let date = Date {
             month: 1,
